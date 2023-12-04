@@ -1,0 +1,32 @@
+name: Import-Test
+networks:
+  - id: 1
+    start_block: 0
+    contracts:
+      - name: ENSRegistryWithFallback
+        address:
+          - '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
+        handler: src/EventHandlers.ts
+        events:
+          - event: ApprovalForAll(address indexed owner, address indexed operator, bool approved)
+            requiredEntities:
+              - name: EventsSummary
+              - name: Account
+          - event: NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
+            requiredEntities:
+              - name: Account
+              - name: Domain
+              - name: EventsSummary
+          - event: NewResolver(bytes32 indexed node, address resolver)
+            requiredEntities:
+              - name: EventsSummary
+          - event: NewTTL(bytes32 indexed node, uint64 ttl)
+            requiredEntities:
+              - name: Account
+              - name: Domain
+              - name: EventsSummary
+          - event: Transfer(bytes32 indexed node, address owner)
+            requiredEntities:
+              - name: Account
+              - name: Domain
+              - name: EventsSummary

@@ -1,0 +1,50 @@
+type EventsSummary {
+    id: ID!
+    approvalForAll: [ApprovalForAll!]! @derivedFrom(field: "eventsSummary")
+    approvalForAllsCount: BigInt!
+    newOwner: [NewOwner!]! @derivedFrom(field: "eventsSummary")
+    newOwnersCount: BigInt!
+    newResolver: [NewResolver!]! @derivedFrom(field: "eventsSummary")
+    newResolversCount: BigInt!
+    newTTL: [NewTTL!]! @derivedFrom(field: "eventsSummary")
+    newTTLsCount: BigInt!
+    transfer: [Transfer!]! @derivedFrom(field: "eventsSummary")
+    transfersCount: BigInt!
+}
+
+type ApprovalForAll {
+    id: ID!
+    owner: String!
+    operator: String!
+    approved: Boolean!
+    eventsSummary: String!
+}
+
+type NewOwner {
+    id: ID!
+    node: String!
+    label: String!
+    owner: String!
+    eventsSummary: String!
+}
+
+type NewResolver {
+    id: ID!
+    node: String!
+    resolver: String!
+    eventsSummary: String!
+}
+
+type NewTTL {
+    id: ID!
+    node: String!
+    ttl: BigInt!
+    eventsSummary: String!
+}
+
+type Transfer {
+    id: ID!
+    node: String!
+    owner: String!
+    eventsSummary: String!
+}
