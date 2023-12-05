@@ -10,8 +10,8 @@ networks:
         events:
           - event: ApprovalForAll(address indexed owner, address indexed operator, bool approved)
             requiredEntities:
-              - name: EventsSummary
               - name: Account
+              - name: EventsSummary
           - event: NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
             requiredEntities:
               - name: Account
@@ -19,6 +19,7 @@ networks:
               - name: EventsSummary
           - event: NewResolver(bytes32 indexed node, address resolver)
             requiredEntities:
+              - name: Domain
               - name: EventsSummary
           - event: NewTTL(bytes32 indexed node, uint64 ttl)
             requiredEntities:

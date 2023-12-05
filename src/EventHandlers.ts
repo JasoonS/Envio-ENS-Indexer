@@ -63,10 +63,15 @@ ENSRegistryWithFallbackContract_ApprovalForAll_handler(({event, context}) => {
 
 ENSRegistryWithFallbackContract_NewOwner_loader(({event, context}) => {
     context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+    context.Account.load(event.params.owner.toString());
+    context.Domain.load(event.params.node.toString(), {
+        loaders: {loadOwner: true}
+    });
 });
 
 ENSRegistryWithFallbackContract_NewOwner_handler(({event, context}) => {
     let summary = context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
+    let dom = context.Domain.get(event.params.node.toString())
 
     let currentSummaryEntity: EventsSummaryEntity =
         summary ?? INITIAL_EVENTS_SUMMARY;
@@ -84,8 +89,26 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({event, context}) => {
         eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
     };
 
+    if (dom != undefined) {
+        dom = {
+            ...dom,
+            owner: event.params.owner.toString(),
+            label: event.params.label.toString()
+        }
+    } else {
+        dom = {
+            id: event.params.node.toString(),
+            label: event.params.label.toString(),
+            ttl: BigInt(0),
+            blockTimestamp: event.blockTimestamp,
+            owner: event.params.owner.toString(),
+            expiryDate: BigInt(0),
+            isMigrated: false
+        }
+    }
     context.EventsSummary.set(nextSummaryEntity);
     context.NewOwner.set(newOwnerEntity);
+    context.Domain.set(dom);
 });
 
 ENSRegistryWithFallbackContract_NewResolver_loader(({event, context}) => {
@@ -116,10 +139,14 @@ ENSRegistryWithFallbackContract_NewResolver_handler(({event, context}) => {
 
 ENSRegistryWithFallbackContract_NewTTL_loader(({event, context}) => {
     context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+    context.Domain.load(event.params.node.toString(), {
+        loaders: {loadOwner: false}
+    });
 });
 
 ENSRegistryWithFallbackContract_NewTTL_handler(({event, context}) => {
     let summary = context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
+    let dom = context.Domain.get(event.params.node.toString())
 
     let currentSummaryEntity: EventsSummaryEntity =
         summary ?? INITIAL_EVENTS_SUMMARY;
@@ -136,16 +163,30 @@ ENSRegistryWithFallbackContract_NewTTL_handler(({event, context}) => {
         eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
     };
 
+    if (dom != undefined) {
+        dom = {
+            ...dom,
+            ttl: event.params.ttl,
+            expiryDate: dom.expiryDate! + event.params.ttl
+        }
+        context.Domain.set(dom);
+    }
+
     context.EventsSummary.set(nextSummaryEntity);
     context.NewTTL.set(newTTLEntity);
 });
 
 ENSRegistryWithFallbackContract_Transfer_loader(({event, context}) => {
     context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+    context.Account.load(event.params.owner.toString());
+    context.Domain.load(event.params.node.toString(), {
+        loaders: {loadOwner: true}
+    });
 });
 
 ENSRegistryWithFallbackContract_Transfer_handler(({event, context}) => {
     let summary = context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
+    let dom = context.Domain.get(event.params.node.toString())
 
     let currentSummaryEntity: EventsSummaryEntity =
         summary ?? INITIAL_EVENTS_SUMMARY;
@@ -161,6 +202,13 @@ ENSRegistryWithFallbackContract_Transfer_handler(({event, context}) => {
         owner: event.params.owner,
         eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
     };
+    if (dom != undefined) {
+        dom = {
+            ...dom,
+            owner: event.params.owner.toString()
+        }
+        context.Domain.set(dom);
+    }
 
     context.EventsSummary.set(nextSummaryEntity);
     context.Transfer.set(transferEntity);

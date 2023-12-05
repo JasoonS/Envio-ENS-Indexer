@@ -48,3 +48,36 @@ type Transfer {
     owner: String!
     eventsSummary: String!
 }
+
+
+type Account {
+    "The unique identifier for the account"
+    id: ID!
+#    "The domains owned by the account"
+#    domains: [Domain!]! @derivedFrom(field: "owner")
+}
+
+type Domain  {
+    "The namehash of the name"
+    id: ID!
+    "The human readable label name (imported from CSV), if known"
+    label: String
+#    "keccak256(labelName)"
+#    labelhash: Bytes
+#    "The namehash (id) of the parent name"
+#    parent: Domain
+#    "Can count domains from length of array"
+#    subdomains: [Domain!]! @derivedFrom(field: "parent")
+#    "The number of subdomains"
+#    subdomainCount: Int!
+    "The time-to-live (TTL) value of the domain's records"
+    ttl: BigInt
+    "The time when the domain was created"
+    blockTimestamp: Int!
+    "The account that owns the domain"
+    owner: Account!
+    "The expiry date for the domain, from either the registration, or the wrapped domain if PCC is burned"
+    expiryDate: BigInt
+    "Indicates whether the domain has been migrated to a new registrar"
+    isMigrated: Boolean!
+}
