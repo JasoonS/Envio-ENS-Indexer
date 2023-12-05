@@ -31,3 +31,17 @@ networks:
               - name: Account
               - name: Domain
               - name: EventsSummary
+      - name: ETHRegistrarController
+        address:
+          - '0x253553366Da8546fC250F225fe3d25d0C782303b'
+        handler: src/RegistrarControllerEventHandler.ts
+        events:
+          - event: NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
+            requiredEntities:
+              - name: EthRegistrarControllerEventSummary
+          - event: NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires)
+            requiredEntities:
+              - name: EthRegistrarControllerEventSummary
+          - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+            requiredEntities:
+              - name: EthRegistrarControllerEventSummary

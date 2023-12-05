@@ -49,12 +49,49 @@ type Transfer {
     eventsSummary: String!
 }
 
+type EthRegistrarControllerEventSummary {
+    id: ID!
+    nameRegistered: [NameRegistered!]! @derivedFrom(field: "eventsSummary")
+    nameRegisteredsCount: BigInt!
+    nameRenewed: [NameRenewed!]! @derivedFrom(field: "eventsSummary")
+    nameRenewedsCount: BigInt!
+    ownershipTransferred: [OwnershipTransferred!]! @derivedFrom(field: "eventsSummary")
+    ownershipTransferredsCount: BigInt!
+}
+
+type NameRegistered {
+    id: ID!
+    name: String!
+    label: String!
+    owner: String!
+    baseCost: BigInt!
+    premium: BigInt!
+    expires: BigInt!
+    eventsSummary: String!
+}
+
+type NameRenewed {
+    id: ID!
+    name: String!
+    label: String!
+    cost: BigInt!
+    expires: BigInt!
+    eventsSummary: String!
+}
+
+type OwnershipTransferred {
+    id: ID!
+    previousOwner: String!
+    newOwner: String!
+    eventsSummary: String!
+}
+
 
 type Account {
     "The unique identifier for the account"
     id: ID!
-#    "The domains owned by the account"
-#    domains: [Domain!]! @derivedFrom(field: "owner")
+    #    "The domains owned by the account"
+    #    domains: [Domain!]! @derivedFrom(field: "owner")
 }
 
 type Domain  {
@@ -62,14 +99,14 @@ type Domain  {
     id: ID!
     "The human readable label name (imported from CSV), if known"
     label: String
-#    "keccak256(labelName)"
-#    labelhash: Bytes
-#    "The namehash (id) of the parent name"
-#    parent: Domain
-#    "Can count domains from length of array"
-#    subdomains: [Domain!]! @derivedFrom(field: "parent")
-#    "The number of subdomains"
-#    subdomainCount: Int!
+    #    "keccak256(labelName)"
+    #    labelhash: Bytes
+    #    "The namehash (id) of the parent name"
+    #    parent: Domain
+    #    "Can count domains from length of array"
+    #    subdomains: [Domain!]! @derivedFrom(field: "parent")
+    #    "The number of subdomains"
+    #    subdomainCount: Int!
     "The time-to-live (TTL) value of the domain's records"
     ttl: BigInt
     "The time when the domain was created"
