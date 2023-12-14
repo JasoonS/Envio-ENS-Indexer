@@ -7,106 +7,159 @@ import {
     ETHRegistrarControllerContract_NameRenewed_handler,
     ETHRegistrarControllerContract_NameRenewed_loader,
     ETHRegistrarControllerContract_OwnershipTransferred_handler,
-    ETHRegistrarControllerContract_OwnershipTransferred_loader,
+    ETHRegistrarControllerContract_OwnershipTransferred_loader
 } from "../generated/src/Handlers.gen";
 
 import {
+    AccountEntity,
+    DomainEntity,
+    DomainMetaEntity,
     EthRegistrarControllerEventSummaryEntity,
     NameRegisteredEntity,
     NameRenewedEntity,
     OwnershipTransferredEntity
 } from "./src/Types.gen";
 
-const GLOBAL_EVENTS_SUMMARY_KEY = "GlobalEventsSummary";
+const GLOBAL_EVENTS_SUMMARY_KEY = "GlobalEthRegistrarControllerEventsSummary";
 
 const INITIAL_EVENTS_SUMMARY: EthRegistrarControllerEventSummaryEntity = {
-    id: GLOBAL_EVENTS_SUMMARY_KEY,
-    nameRegisteredsCount: BigInt(0),
-    nameRenewedsCount: BigInt(0),
-    ownershipTransferredsCount: BigInt(0),
+  id: GLOBAL_EVENTS_SUMMARY_KEY,
+  nameRegisteredsCount: BigInt(0),
+  nameRenewedsCount: BigInt(0),
+  ownershipTransferredsCount: BigInt(0)
 };
 
-ETHRegistrarControllerContract_NameRegistered_loader(({event, context}) => {
-    context.EthRegistrarControllerEventSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+ETHRegistrarControllerContract_NameRegistered_loader(({ event, context }) => {
+  context.EthRegistrarControllerEventSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
 });
 
-ETHRegistrarControllerContract_NameRegistered_handler(({event, context}) => {
-    let summary = context.EthRegistrarControllerEventSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
+ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
+  let summary = context.EthRegistrarControllerEventSummary.get(
+    GLOBAL_EVENTS_SUMMARY_KEY
+  );
+
+  let currentSummaryEntity: EthRegistrarControllerEventSummaryEntity =
+    summary ?? INITIAL_EVENTS_SUMMARY;
+
+  let nextSummaryEntity = {
+    ...currentSummaryEntity,
+    nameRegisteredsCount: currentSummaryEntity.nameRegisteredsCount + BigInt(1)
+  };
+
+  let nameRegisteredEntity: NameRegisteredEntity = {
+    id: event.transactionHash + event.logIndex.toString(),
+    name: event.params.name,
+    label: event.params.label,
+    owner: event.params.owner,
+    baseCost: event.params.baseCost,
+    premium: event.params.premium,
+    expires: event.params.expires,
+    eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY
+  };
+
+  let acc: AccountEntity = { id: event.params.owner };
+
+  let label: DomainMetaEntity = {
+    domain: event.transactionHash + event.logIndex.toString(),
+    id: event.params.name,
+    label: event.params.label
+  };
+
+  let domain: DomainEntity = {
+    id: event.transactionHash + event.logIndex.toString(),
+    isMigrated: false,
+    ttl: BigInt(0),
+    name: event.params.name,
+    owner: event.params.owner,
+    srcAddress: event.srcAddress,
+    resolver: null,
+    parent: null,
+    node: null,
+    subdomainCount: 0,
+    expiryDate: event.params.expires,
+    baseCost: event.params.baseCost,
+    renewPremium: event.params.premium,
+    blockTimestamp: event.blockTimestamp
+  };
+
+  context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
+  context.NameRegistered.set(nameRegisteredEntity);
+  context.Account.set(acc);
+  context.Domain.set(domain);
+  context.DomainMeta.set(label);
+});
+
+ETHRegistrarControllerContract_NameRenewed_loader(({ event, context }) => {
+  context.EthRegistrarControllerEventSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+});
+
+ETHRegistrarControllerContract_NameRenewed_handler(({ event, context }) => {
+  let summary = context.EthRegistrarControllerEventSummary.get(
+    GLOBAL_EVENTS_SUMMARY_KEY
+  );
+  let meta = context.DomainMeta.get(event.params.label);
+
+  if (meta === undefined) {
+    return;
+  }
+
+  let domain = context.DomainMeta.getDomain(meta);
+  domain = {
+    ...domain,
+    expiryDate: event.params.expires
+  };
+
+  let currentSummaryEntity: EthRegistrarControllerEventSummaryEntity =
+    summary ?? INITIAL_EVENTS_SUMMARY;
+
+  let nextSummaryEntity = {
+    ...currentSummaryEntity,
+    nameRenewedsCount: currentSummaryEntity.nameRenewedsCount + BigInt(1)
+  };
+
+  let nameRenewedEntity: NameRenewedEntity = {
+    id: event.transactionHash + event.logIndex.toString(),
+    name: event.params.name,
+    label: event.params.label,
+    cost: event.params.cost,
+    expires: event.params.expires,
+    eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY
+  };
+
+  context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
+  context.NameRenewed.set(nameRenewedEntity);
+  context.Domain.set(domain);
+});
+
+ETHRegistrarControllerContract_OwnershipTransferred_loader(
+  ({ event, context }) => {
+    context.EthRegistrarControllerEventSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+  }
+);
+
+ETHRegistrarControllerContract_OwnershipTransferred_handler(
+  ({ event, context }) => {
+    let summary = context.EthRegistrarControllerEventSummary.get(
+      GLOBAL_EVENTS_SUMMARY_KEY
+    );
 
     let currentSummaryEntity: EthRegistrarControllerEventSummaryEntity =
-        summary ?? INITIAL_EVENTS_SUMMARY;
+      summary ?? INITIAL_EVENTS_SUMMARY;
 
     let nextSummaryEntity = {
-        ...currentSummaryEntity,
-        nameRegisteredsCount: currentSummaryEntity.nameRegisteredsCount + BigInt(1),
-    };
-
-    let nameRegisteredEntity: NameRegisteredEntity = {
-        id: event.transactionHash + event.logIndex.toString(),
-        name: event.params.name,
-        label: event.params.label,
-        owner: event.params.owner,
-        baseCost: event.params.baseCost,
-        premium: event.params.premium,
-        expires: event.params.expires,
-        eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
-    };
-
-    context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
-    context.NameRegistered.set(nameRegisteredEntity);
-});
-
-ETHRegistrarControllerContract_NameRenewed_loader(({event, context}) => {
-    context.EthRegistrarControllerEventSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-});
-
-ETHRegistrarControllerContract_NameRenewed_handler(({event, context}) => {
-    let summary = context.EthRegistrarControllerEventSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
-
-    let currentSummaryEntity: EthRegistrarControllerEventSummaryEntity =
-        summary ?? INITIAL_EVENTS_SUMMARY;
-
-    let nextSummaryEntity = {
-        ...currentSummaryEntity,
-        nameRenewedsCount: currentSummaryEntity.nameRenewedsCount + BigInt(1),
-    };
-
-    let nameRenewedEntity: NameRenewedEntity = {
-        id: event.transactionHash + event.logIndex.toString(),
-        name: event.params.name,
-        label: event.params.label,
-        cost: event.params.cost,
-        expires: event.params.expires,
-        eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
-    };
-
-    context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
-    context.NameRenewed.set(nameRenewedEntity);
-});
-
-ETHRegistrarControllerContract_OwnershipTransferred_loader(({event, context}) => {
-    context.EthRegistrarControllerEventSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-});
-
-ETHRegistrarControllerContract_OwnershipTransferred_handler(({event, context}) => {
-    let summary = context.EthRegistrarControllerEventSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
-
-    let currentSummaryEntity: EthRegistrarControllerEventSummaryEntity =
-        summary ?? INITIAL_EVENTS_SUMMARY;
-
-    let nextSummaryEntity = {
-        ...currentSummaryEntity,
-        ownershipTransferredsCount: currentSummaryEntity.ownershipTransferredsCount + BigInt(1),
+      ...currentSummaryEntity,
+      ownershipTransferredsCount:
+        currentSummaryEntity.ownershipTransferredsCount + BigInt(1)
     };
 
     let ownershipTransferredEntity: OwnershipTransferredEntity = {
-        id: event.transactionHash + event.logIndex.toString(),
-        previousOwner: event.params.previousOwner,
-        newOwner: event.params.newOwner,
-        eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
+      id: event.transactionHash + event.logIndex.toString(),
+      previousOwner: event.params.previousOwner,
+      newOwner: event.params.newOwner,
+      eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY
     };
 
     context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
     context.OwnershipTransferred.set(ownershipTransferredEntity);
-});
-
+  }
+);

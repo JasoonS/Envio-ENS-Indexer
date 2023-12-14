@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Envio-ENS-Indexer.iml" filepath="$PROJECT_DIR$/.idea/Envio-ENS-Indexer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ENS-Indexer.iml" filepath="$PROJECT_DIR$/.idea/ENS-Indexer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../ens-subgraph/.idea/ens-subgraph.iml" filepath="$PROJECT_DIR$/../ens-subgraph/.idea/ens-subgraph.iml" />
     </modules>
   </component>
 </project>

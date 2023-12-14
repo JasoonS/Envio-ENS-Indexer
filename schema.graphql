@@ -1,4 +1,4 @@
-type EventsSummary {
+type ENSRegistryEventsSummary {
     id: ID!
     approvalForAll: [ApprovalForAll!]! @derivedFrom(field: "eventsSummary")
     approvalForAllsCount: BigInt!
@@ -49,6 +49,7 @@ type Transfer {
     eventsSummary: String!
 }
 
+
 type EthRegistrarControllerEventSummary {
     id: ID!
     nameRegistered: [NameRegistered!]! @derivedFrom(field: "eventsSummary")
@@ -86,35 +87,161 @@ type OwnershipTransferred {
     eventsSummary: String!
 }
 
+type NameWrapperEventsSummary {
+    id: ID!
+    approval: [Approval!]! @derivedFrom(field: "eventsSummary")
+    approvalsCount: BigInt!
+    approvalForAll: [NWApprovalForAll!]! @derivedFrom(field: "eventsSummary")
+    approvalForAllsCount: BigInt!
+    controllerChanged: [ControllerChanged!]! @derivedFrom(field: "eventsSummary")
+    controllerChangedsCount: BigInt!
+    expiryExtended: [ExpiryExtended!]! @derivedFrom(field: "eventsSummary")
+    expiryExtendedsCount: BigInt!
+    fusesSet: [FusesSet!]! @derivedFrom(field: "eventsSummary")
+    fusesSetsCount: BigInt!
+    nameUnwrapped: [NameUnwrapped!]! @derivedFrom(field: "eventsSummary")
+    nameUnwrappedsCount: BigInt!
+    nameWrapped: [NameWrapped!]! @derivedFrom(field: "eventsSummary")
+    nameWrappedsCount: BigInt!
+    ownershipTransferred: [OwnershipTransferred!]! @derivedFrom(field: "eventsSummary")
+    ownershipTransferredsCount: BigInt!
+    transferBatch: [TransferBatch!]! @derivedFrom(field: "eventsSummary")
+    transferBatchsCount: BigInt!
+    transferSingle: [TransferSingle!]! @derivedFrom(field: "eventsSummary")
+    transferSinglesCount: BigInt!
+    uRI: [URI!]! @derivedFrom(field: "eventsSummary")
+    uRIsCount: BigInt!
+}
+
+type Approval {
+    id: ID!
+    owner: String!
+    approved: String!
+    tokenId: BigInt!
+    eventsSummary: String!
+}
+
+type NWApprovalForAll {
+    id: ID!
+    account: String!
+    operator: String!
+    approved: Boolean!
+    eventsSummary: String!
+}
+
+type ControllerChanged {
+    id: ID!
+    controller: String!
+    active: Boolean!
+    eventsSummary: String!
+}
+
+type ExpiryExtended {
+    id: ID!
+    node: String!
+    expiry: BigInt!
+    eventsSummary: String!
+}
+
+type FusesSet {
+    id: ID!
+    node: String!
+    fuses: BigInt!
+    eventsSummary: String!
+}
+
+type NameUnwrapped {
+    id: ID!
+    node: String!
+    owner: String!
+    eventsSummary: String!
+}
+
+type NameWrapped {
+    id: ID!
+    node: String!
+    name: String!
+    owner: String!
+    fuses: BigInt!
+    expiry: BigInt!
+    eventsSummary: String!
+}
+
+type TransferBatch {
+    id: ID!
+    operator: String!
+    from: String!
+    to: String!
+    ids: [BigInt!]!
+    values: [BigInt!]!
+    eventsSummary: String!
+}
+
+type TransferSingle {
+    id: ID!
+    operator: String!
+    from: String!
+    to: String!
+    eventId: BigInt!
+    value: BigInt!
+    eventsSummary: String!
+}
+
+type URI {
+    id: ID!
+    value: String!
+    eventId: BigInt!
+    eventsSummary: String!
+}
+
 
 type Account {
     "The unique identifier for the account"
     id: ID!
-    #    "The domains owned by the account"
-    #    domains: [Domain!]! @derivedFrom(field: "owner")
+    "The domains owned by the account"
+    domains: [Domain!]! @derivedFrom(field: "owner")
 }
 
-type Domain  {
-    "The namehash of the name"
+type DomainMeta {
+    "The human readable name (imported from CSV), if known"
     id: ID!
     "The human readable label name (imported from CSV), if known"
     label: String
-    #    "keccak256(labelName)"
-    #    labelhash: Bytes
-    #    "The namehash (id) of the parent name"
-    #    parent: Domain
-    #    "Can count domains from length of array"
-    #    subdomains: [Domain!]! @derivedFrom(field: "parent")
-    #    "The number of subdomains"
-    #    subdomainCount: Int!
+    domain: Domain!
+}
+
+type DomainNode {
+    id: ID!
+    domain: Domain!
+    #    parent: Domain! @derivedFrom(field: "label")
+}
+
+type Domain  {
+    "The name hash of the name"
+    id: ID!
+    "The human readable label name (imported from CSV), if known"
+    name: DomainMeta!
+    "The namehash (id) of the parent name"
+    parent: Domain
+    "Can count domains from length of array"
+    subdomains: [Domain!]! @derivedFrom(field: "parent")
+    "The number of subdomains"
+    subdomainCount: Int!
     "The time-to-live (TTL) value of the domain's records"
     ttl: BigInt
     "The time when the domain was created"
     blockTimestamp: Int!
     "The account that owns the domain"
     owner: Account!
+    srcAddress: String
     "The expiry date for the domain, from either the registration, or the wrapped domain if PCC is burned"
     expiryDate: BigInt
     "Indicates whether the domain has been migrated to a new registrar"
     isMigrated: Boolean!
+    baseCost: BigInt
+    renewPremium: BigInt
+
+    node: DomainNode
+    resolver: String
 }
+
