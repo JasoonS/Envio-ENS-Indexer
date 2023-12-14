@@ -142,6 +142,7 @@ NameWrapperContract_ControllerChanged_handler(({ event, context }) => {
 
 NameWrapperContract_ExpiryExtended_loader(({ event, context }) => {
   context.NameWrapperEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+  context.DomainNode.load(event.params.node, { loaders: { loadDomain: {} } });
 });
 
 NameWrapperContract_ExpiryExtended_handler(({ event, context }) => {
@@ -230,6 +231,7 @@ NameWrapperContract_NameUnwrapped_handler(({ event, context }) => {
 
 NameWrapperContract_NameWrapped_loader(({ event, context }) => {
   context.NameWrapperEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+  context.DomainNode.load(event.params.node, { loaders: { loadDomain: {} } });
 });
 
 NameWrapperContract_NameWrapped_handler(({ event, context }) => {

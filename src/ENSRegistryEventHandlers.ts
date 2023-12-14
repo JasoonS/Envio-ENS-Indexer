@@ -12,7 +12,7 @@ import {
   ENSRegistryWithFallbackContract_NewTTL_loader,
   ENSRegistryWithFallbackContract_Transfer_handler,
   ENSRegistryWithFallbackContract_Transfer_loader
-} from "./src/Handlers.gen";
+} from "../generated/src/Handlers.gen";
 
 import {
   ApprovalForAllEntity,
@@ -63,6 +63,7 @@ ENSRegistryWithFallbackContract_ApprovalForAll_handler(({ event, context }) => {
 
 ENSRegistryWithFallbackContract_NewOwner_loader(({ event, context }) => {
   context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+  context.DomainNode.load(event.params.node, { loaders: { loadDomain: {} } });
 });
 
 ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
@@ -99,6 +100,7 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
 
 ENSRegistryWithFallbackContract_NewResolver_loader(({ event, context }) => {
   context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+  context.DomainNode.load(event.params.node, { loaders: { loadDomain: {} } });
 });
 
 ENSRegistryWithFallbackContract_NewResolver_handler(({ event, context }) => {
@@ -132,6 +134,7 @@ ENSRegistryWithFallbackContract_NewResolver_handler(({ event, context }) => {
 
 ENSRegistryWithFallbackContract_NewTTL_loader(({ event, context }) => {
   context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+  context.DomainNode.load(event.params.node, { loaders: { loadDomain: {} } });
 });
 
 ENSRegistryWithFallbackContract_NewTTL_handler(({ event, context }) => {
@@ -165,6 +168,7 @@ ENSRegistryWithFallbackContract_NewTTL_handler(({ event, context }) => {
 
 ENSRegistryWithFallbackContract_Transfer_loader(({ event, context }) => {
   context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+  context.DomainNode.load(event.params.node, { loaders: { loadDomain: {} } });
 });
 
 ENSRegistryWithFallbackContract_Transfer_handler(({ event, context }) => {
