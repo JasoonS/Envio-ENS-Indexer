@@ -202,25 +202,26 @@ type Account {
     domains: [Domain!]! @derivedFrom(field: "owner")
 }
 
-type DomainMeta {
+type DomainNameMeta {
     "The human readable name (imported from CSV), if known"
     id: ID!
-    "The human readable label name (imported from CSV), if known"
-    label: String
     domain: Domain!
 }
+
+type LabelMeta {
+    id: ID!
+    domain: Domain!
+}
+
 
 type DomainNode {
     id: ID!
     domain: Domain!
-    #    parent: Domain! @derivedFrom(field: "label")
 }
 
 type Domain  {
     "The name hash of the name"
     id: ID!
-    "The human readable label name (imported from CSV), if known"
-    name: DomainMeta!
     "The namehash (id) of the parent name"
     parent: Domain
     "Can count domains from length of array"
@@ -243,5 +244,7 @@ type Domain  {
 
     node: DomainNode
     resolver: String
+    name: DomainNameMeta!
+    label: LabelMeta!
 }
 

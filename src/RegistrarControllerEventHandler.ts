@@ -13,8 +13,9 @@ import {
 import {
     AccountEntity,
     DomainEntity,
-    DomainMetaEntity,
+    DomainNameMetaEntity,
     EthRegistrarControllerEventSummaryEntity,
+    LabelMetaEntity,
     NameRegisteredEntity,
     NameRenewedEntity,
     OwnershipTransferredEntity
@@ -59,10 +60,14 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
 
   let acc: AccountEntity = { id: event.params.owner };
 
-  let label: DomainMetaEntity = {
+  let nameMeta: DomainNameMetaEntity = {
     domain: event.transactionHash + event.logIndex.toString(),
-    id: event.params.name,
-    label: event.params.label
+    id: event.params.name
+  };
+
+  let label: LabelMetaEntity = {
+    domain: event.transactionHash + event.logIndex.toString(),
+    id: event.params.name
   };
 
   let domain: DomainEntity = {
@@ -79,14 +84,16 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
     expiryDate: event.params.expires,
     baseCost: event.params.baseCost,
     renewPremium: event.params.premium,
-    blockTimestamp: event.blockTimestamp
+    blockTimestamp: event.blockTimestamp,
+    label: event.params.label
   };
 
   context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
   context.NameRegistered.set(nameRegisteredEntity);
   context.Account.set(acc);
   context.Domain.set(domain);
-  context.DomainMeta.set(label);
+  context.DomainNameMeta.set(nameMeta);
+  context.LabelMeta.set(label);
 });
 
 ETHRegistrarControllerContract_NameRenewed_loader(({ event, context }) => {
@@ -97,17 +104,16 @@ ETHRegistrarControllerContract_NameRenewed_handler(({ event, context }) => {
   let summary = context.EthRegistrarControllerEventSummary.get(
     GLOBAL_EVENTS_SUMMARY_KEY
   );
-  let meta = context.DomainMeta.get(event.params.label);
+  let meta = context.DomainNameMeta.get(event.params.name);
 
-  if (meta === undefined) {
-    return;
+  if (meta !== undefined) {
+    let domain = context.DomainNameMeta.getDomain(meta);
+    domain = {
+      ...domain,
+      expiryDate: event.params.expires
+    };
+    context.Domain.set(domain);
   }
-
-  let domain = context.DomainMeta.getDomain(meta);
-  domain = {
-    ...domain,
-    expiryDate: event.params.expires
-  };
 
   let currentSummaryEntity: EthRegistrarControllerEventSummaryEntity =
     summary ?? INITIAL_EVENTS_SUMMARY;
@@ -128,7 +134,6 @@ ETHRegistrarControllerContract_NameRenewed_handler(({ event, context }) => {
 
   context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
   context.NameRenewed.set(nameRenewedEntity);
-  context.Domain.set(domain);
 });
 
 ETHRegistrarControllerContract_OwnershipTransferred_loader(
