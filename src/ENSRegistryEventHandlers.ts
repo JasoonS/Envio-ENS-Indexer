@@ -67,7 +67,9 @@ ENSRegistryWithFallbackContract_ApprovalForAll_handler(({ event, context }) => {
 
 ENSRegistryWithFallbackContract_NewOwner_loader(({ event, context }) => {
   context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_1);
-  context.DomainNode.load(event.params.node, { loaders: { loadDomain: {} } });
+  context.LabelMeta.load(event.params.label, {
+    loaders: { loadDomain: {} }
+  });
 });
 
 ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
