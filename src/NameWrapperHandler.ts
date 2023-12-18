@@ -244,6 +244,7 @@ NameWrapperContract_NameUnwrapped_handler(({ event, context }) => {
 NameWrapperContract_NameWrapped_loader(({ event, context }) => {
   context.NameWrapperEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_2);
   context.DomainNode.load(event.params.node, { loaders: { loadDomain: {} } });
+  context.Account.load(event.params.owner);
 });
 
 NameWrapperContract_NameWrapped_handler(({ event, context }) => {
