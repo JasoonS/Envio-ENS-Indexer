@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       envio:
-        specifier: 0.0.23
-        version: 0.0.23
+        specifier: 0.0.26
+        version: 0.0.26
       ts-node:
         specifier: 10.9.1
         version: 10.9.1(@types/node@20.8.8)(typescript@5.2.2)
@@ -1640,37 +1640,37 @@ packages:
       ansi-colors: 4.1.3
     dev: true
 
-  /envio-darwin-arm64@0.0.23:
-    resolution: {integrity: sha512-qlj479rjH5mpYEhon4lB9o1NLu5YviUF6wrqopxpmgntPNm/hGL3j5vGwTw3pNE9LnbZWG/1X2eqAiR1+5vD3A==}
+  /envio-darwin-arm64@0.0.26:
+    resolution: {integrity: sha512-+tcbenRVwzbzl8p6sQW4bvsMrkjNXySAIVTjh/Xo+2zo/PqJ0rxnndKwsTd4f12xaBBtOzWXhbqBLdVT7V54Kg==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: false
     optional: true
 
-  /envio-darwin-x64@0.0.23:
-    resolution: {integrity: sha512-r+sqXjfg13uZoQO/Q+nxeYEYKl0L5QJSBI5e+LwCzpabd0s+knn9Ei5DMRa0NjSKieZ1cIjKDkCHGN0ozGDZrw==}
+  /envio-darwin-x64@0.0.26:
+    resolution: {integrity: sha512-kgWChXI5+i94SOZRVoHXTJekvRyRIZDcj4ojpq/vPNLcn0s7kXnK7nL1d+dCRp4x5UsqTsXpIAqHUA3O1ATRjA==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: false
     optional: true
 
-  /envio-linux-x64@0.0.23:
-    resolution: {integrity: sha512-Qm890F5yF8zXS6BiGq7jUl6zqvSa8FmuR3Wzf5TEZynLPEqa2Ny4nztUn0vl08Yn/3lvYgvJe3HBEZ+SGwbdlg==}
+  /envio-linux-x64@0.0.26:
+    resolution: {integrity: sha512-hLFX8Fg8+qhf6aWPMBPdJuaRmSV0TipqYKEUQgLPDErXAfuBWoDvKy5Hbq+Hs14mFCMxLe9NpAwpxo78X4kItg==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: false
     optional: true
 
-  /envio@0.0.23:
-    resolution: {integrity: sha512-DG8lQ4g7vaEwaS51ZhFVDIH/1uReRtxil+KwPrNHEGTX/1G7MU/c/fnuAGPk1946X9yFRMbSviB1yrhS7ZkMvQ==}
+  /envio@0.0.26:
+    resolution: {integrity: sha512-3dfh53l3gmoLvhVpZqa/p1NjUoyTumfvbHyf9IyGlJpE67pOubGo3UMLXsHJVN/EeNM8hm6nW9MAPRCgRd7fPQ==}
     hasBin: true
     optionalDependencies:
-      envio-darwin-arm64: 0.0.23
-      envio-darwin-x64: 0.0.23
-      envio-linux-x64: 0.0.23
+      envio-darwin-arm64: 0.0.26
+      envio-darwin-x64: 0.0.26
+      envio-linux-x64: 0.0.26
     dev: false
 
   /err-code@3.0.1:
