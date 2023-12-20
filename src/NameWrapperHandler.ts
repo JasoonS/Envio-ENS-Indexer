@@ -39,7 +39,8 @@ import {
   OwnershipTransferredEntity,
   TransferBatchEntity,
   TransferSingleEntity,
-  URIEntity
+  URIEntity,
+  wrappedDomainEntity
 } from "./src/Types.gen";
 
 const GLOBAL_EVENTS_SUMMARY_KEY_2 = "GlobalEventsSummary";
@@ -58,6 +59,14 @@ const INITIAL_EVENTS_SUMMARY: NameWrapperEventsSummaryEntity = {
   transferSinglesCount: BigInt(0),
   uRIsCount: BigInt(0)
 };
+export const ETH_NODE =
+  "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae";
+
+const PARENT_CANNOT_CONTROL: bigint = BigInt(65536);
+
+function checkPccBurned(fuses: bigint): boolean {
+  return (fuses & PARENT_CANNOT_CONTROL) == PARENT_CANNOT_CONTROL;
+}
 
 NameWrapperContract_Approval_loader(({ event, context }) => {
   context.NameWrapperEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_2);
@@ -148,21 +157,17 @@ NameWrapperContract_ControllerChanged_handler(({ event, context }) => {
 
 NameWrapperContract_ExpiryExtended_loader(({ event, context }) => {
   context.NameWrapperEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_2);
-  context.DomainNode.load(event.params.node, { loaders: { loadDomain: {} } });
+  context.Domain.load(event.params.node, { loaders: {} });
 });
 
 NameWrapperContract_ExpiryExtended_handler(({ event, context }) => {
   let summary = context.NameWrapperEventsSummary.get(
     GLOBAL_EVENTS_SUMMARY_KEY_2
   );
-  let node = context.DomainNode.get(event.params.node);
+  let domain = context.Domain.get(event.params.node);
 
-  if (node !== undefined) {
-    let domain = context.DomainNode.getDomain(node);
-    domain = {
-      ...domain,
-      expiryDate: event.params.expiry
-    };
+  if (domain !== undefined) {
+    domain = { ...domain, expiryDate: event.params.expiry };
     context.Domain.set(domain);
   }
 
@@ -215,6 +220,7 @@ NameWrapperContract_FusesSet_handler(({ event, context }) => {
 
 NameWrapperContract_NameUnwrapped_loader(({ event, context }) => {
   context.NameWrapperEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_2);
+  context.Domain.load(event.params.node, { loaders: {} });
 });
 
 NameWrapperContract_NameUnwrapped_handler(({ event, context }) => {
@@ -222,6 +228,19 @@ NameWrapperContract_NameUnwrapped_handler(({ event, context }) => {
     GLOBAL_EVENTS_SUMMARY_KEY_2
   );
 
+  let domain = context.Domain.get(event.params.node);
+  if (domain !== undefined) {
+    domain = {
+      ...domain,
+      wrappedOwner: null
+    };
+
+    if (domain.expiryDate && domain.parent !== ETH_NODE) {
+      domain = { ...domain, expiryDate: null };
+    }
+
+    context.Domain.set(domain);
+  }
   let currentSummaryEntity: NameWrapperEventsSummaryEntity =
     summary ?? INITIAL_EVENTS_SUMMARY;
 
@@ -243,7 +262,7 @@ NameWrapperContract_NameUnwrapped_handler(({ event, context }) => {
 
 NameWrapperContract_NameWrapped_loader(({ event, context }) => {
   context.NameWrapperEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_2);
-  context.DomainNode.load(event.params.node, { loaders: { loadDomain: {} } });
+  context.Domain.load(event.params.node, { loaders: {} });
   context.Account.load(event.params.owner);
 });
 
@@ -251,7 +270,8 @@ NameWrapperContract_NameWrapped_handler(({ event, context }) => {
   let summary = context.NameWrapperEventsSummary.get(
     GLOBAL_EVENTS_SUMMARY_KEY_2
   );
-  let node = context.DomainNode.get(event.params.node);
+  let domain = context.Domain.get(event.params.node);
+  let domainID = event.params.node;
   let owner = context.Account.get(event.params.owner);
 
   if (owner === undefined) {
@@ -261,18 +281,33 @@ NameWrapperContract_NameWrapped_handler(({ event, context }) => {
     context.Account.set(owner);
   }
 
-  if (node !== undefined) {
-    let domain = context.DomainNode.getDomain(node);
+  if (domain !== undefined) {
+    domainID = domain.id;
     domain = {
       ...domain,
       name: event.params.name,
-      expiryDate: event.params.expiry,
-      owner: owner.id
+      owner: owner.id,
+      wrappedOwner: owner.id
     };
 
-    context.DomainNode.set(node);
+    if (
+      checkPccBurned(event.params.fuses) &&
+      (!domain.expiryDate || event.params.expiry > domain.expiryDate!)
+    ) {
+      domain = { ...domain, expiryDate: event.params.expiry };
+    }
+
     context.Domain.set(domain);
   }
+
+  let wrappedDomain: wrappedDomainEntity = {
+    domain: domainID,
+    expiryDate: event.params.expiry,
+    fuses: event.params.fuses,
+    id: event.params.node,
+    name: event.params.name,
+    owner: event.params.owner
+  };
 
   let currentSummaryEntity: NameWrapperEventsSummaryEntity =
     summary ?? INITIAL_EVENTS_SUMMARY;
@@ -294,6 +329,7 @@ NameWrapperContract_NameWrapped_handler(({ event, context }) => {
 
   context.NameWrapperEventsSummary.set(nextSummaryEntity);
   context.NameWrapped.set(nameWrappedEntity);
+  context.WrappedDomain.set(wrappedDomain);
 });
 
 NameWrapperContract_OwnershipTransferred_loader(({ event, context }) => {

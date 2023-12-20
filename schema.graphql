@@ -200,6 +200,7 @@ type Account {
     id: ID!
     "The domains owned by the account"
     domains: [Domain!]! @derivedFrom(field: "owner")
+    wrappedDomains: [WrappedDomain!] @derivedFrom(field: "owner")
 }
 
 type DomainNameMeta {
@@ -208,20 +209,26 @@ type DomainNameMeta {
     domain: Domain!
 }
 
-type LabelMeta {
+type WrappedDomain {
+    "unique identifier for each instance of the WrappedDomain entity"
     id: ID!
+    "The domain that is wrapped by this WrappedDomain"
     domain: Domain!
-}
-
-
-type DomainNode {
-    id: ID!
-    domain: Domain!
+    "The expiry date of the wrapped domain"
+    expiryDate: BigInt!
+    "The number of fuses remaining on the wrapped domain"
+    fuses: BigInt!
+    "The account that owns this WrappedDomain"
+    owner: Account!
+    "The name of the wrapped domain"
+    name: String
 }
 
 type Domain  {
-    "The name hash of the name"
+    "The name hash(node) of the name"
     id: ID!
+    "The human readable label name (imported from CSV), if known"
+    label: String
     "The namehash (id) of the parent name"
     parent: Domain
     "Can count domains from length of array"
@@ -234,17 +241,18 @@ type Domain  {
     blockTimestamp: Int!
     "The account that owns the domain"
     owner: Account!
+    "The account that owns the wrapped domain"
+    wrappedOwner: Account
     srcAddress: String
     "The expiry date for the domain, from either the registration, or the wrapped domain if PCC is burned"
     expiryDate: BigInt
-    "Indicates whether the domain has been migrated to a new registrar"
-    isMigrated: Boolean!
+    "The wrapped domain associated with the domain"
+    wrappedDomain: WrappedDomain @derivedFrom(field: "domain")
+
+
     baseCost: BigInt
     renewPremium: BigInt
-
-    node: DomainNode
     resolver: String
     name: DomainNameMeta!
-    label: LabelMeta!
 }
 

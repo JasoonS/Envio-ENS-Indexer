@@ -15,7 +15,6 @@ import {
     DomainEntity,
     DomainNameMetaEntity,
     EthRegistrarControllerEventSummaryEntity,
-    LabelMetaEntity,
     NameRegisteredEntity,
     NameRenewedEntity,
     OwnershipTransferredEntity
@@ -65,21 +64,15 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
     id: event.params.name
   };
 
-  let label: LabelMetaEntity = {
-    domain: event.transactionHash + event.logIndex.toString(),
-    id: event.params.name
-  };
-
   let domain: DomainEntity = {
     id: event.transactionHash + event.logIndex.toString(),
-    isMigrated: false,
     ttl: BigInt(0),
     name: event.params.name,
     owner: event.params.owner,
     srcAddress: event.srcAddress,
     resolver: null,
     parent: null,
-    node: null,
+    wrappedOwner: null,
     subdomainCount: 0,
     expiryDate: event.params.expires,
     baseCost: event.params.baseCost,
@@ -93,7 +86,6 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
   context.Account.set(acc);
   context.Domain.set(domain);
   context.DomainNameMeta.set(nameMeta);
-  context.LabelMeta.set(label);
 });
 
 ETHRegistrarControllerContract_NameRenewed_loader(({ event, context }) => {

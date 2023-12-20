@@ -1,6 +1,6 @@
 name: ENS-Indexer
 networks:
-  - id: 5
+  - id: 1
     start_block: 0
     contracts:
       - name: ENSRegistryWithFallback
@@ -13,20 +13,20 @@ networks:
               - name: ENSRegistryEventsSummary
           - event: NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
             requiredEntities:
-              - name: DomainNode
+              - name: Account
+              - name: Domain
               - name: ENSRegistryEventsSummary
-              - name: LabelMeta
           - event: NewResolver(bytes32 indexed node, address resolver)
             requiredEntities:
-              - name: DomainNode
+              - name: Domain
               - name: ENSRegistryEventsSummary
           - event: NewTTL(bytes32 indexed node, uint64 ttl)
             requiredEntities:
-              - name: DomainNode
+              - name: Domain
               - name: ENSRegistryEventsSummary
           - event: Transfer(bytes32 indexed node, address owner)
             requiredEntities:
-              - name: DomainNode
+              - name: Domain
               - name: ENSRegistryEventsSummary
       - name: ETHRegistrarController
         address:
@@ -65,18 +65,19 @@ networks:
           - event: ExpiryExtended(bytes32 indexed node, uint64 expiry)
             requiredEntities:
               - name: NameWrapperEventsSummary
-              - name: DomainNode
+              - name: Domain
           - event: FusesSet(bytes32 indexed node, uint32 fuses)
             requiredEntities:
               - name: NameWrapperEventsSummary
           - event: NameUnwrapped(bytes32 indexed node, address owner)
             requiredEntities:
+              - name: Domain
               - name: NameWrapperEventsSummary
           - event: NameWrapped(bytes32 indexed node, bytes name, address owner, uint32 fuses, uint64 expiry)
             requiredEntities:
               - name: Account
-              - name: DomainNameMeta
-              - name: DomainNode
+              - name: WrappedDomain
+              - name: Domain
               - name: NameWrapperEventsSummary
           - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
             requiredEntities:
