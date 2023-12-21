@@ -1,6 +1,6 @@
 name: ENS-Indexer
 networks:
-  - id: 1
+  - id: 5
     start_block: 0
     contracts:
       - name: ENSRegistryWithFallback
@@ -30,20 +30,21 @@ networks:
               - name: ENSRegistryEventsSummary
       - name: ETHRegistrarController
         address:
-          - "0xCc5e7dB10E65EED1BBD105359e7268aa660f6734"
+          - "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85"
         handler: src/RegistrarControllerEventHandler.ts
         events:
           - event: NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
             requiredEntities:
               - name: Account
               - name: Domain
+              - name: Registration
               - name: DomainNameMeta
               - name: EthRegistrarControllerEventSummary
           - event: NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires)
             requiredEntities:
               - name: Account
               - name: Domain
-              - name: DomainNameMeta
+              - name: Registration
               - name: EthRegistrarControllerEventSummary
           - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
             requiredEntities:
