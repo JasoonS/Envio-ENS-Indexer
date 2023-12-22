@@ -24,7 +24,7 @@ import {
   NewTTLEntity,
   TransferEntity
 } from "./src/Types.gen";
-import {EMPTY_ADDRESS, makeSubnode, ROOT_NODE} from "./utils";
+import {EMPTY_ADDRESS, makeSubnode, removeNullBytes, ROOT_NODE} from "./utils";
 
 const GLOBAL_EVENTS_SUMMARY_KEY_1 = "GlobalENSRegistryEventsSummary";
 
@@ -68,6 +68,8 @@ ENSRegistryWithFallbackContract_ApprovalForAll_handler(({ event, context }) => {
 
 ENSRegistryWithFallbackContract_NewOwner_loader(({ event, context }) => {
   context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_1);
+  context.Domain.load(event.params.node, {});
+  context.Domain.load(makeSubnode(event).toString(), {});
 });
 
 ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
@@ -77,7 +79,7 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
   let subNode = makeSubnode(event);
   let account = <accountEntity>{ id: event.params.owner };
   let parent = context.Domain.get(event.params.node);
-  let domain = context.Domain.get(subNode);
+  let domain = context.Domain.get(removeNullBytes(subNode));
 
   if (domain?.parent === null && parent !== undefined) {
     parent = {

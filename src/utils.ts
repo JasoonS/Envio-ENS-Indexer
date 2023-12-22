@@ -2,7 +2,8 @@ import {
   ENSRegistryWithFallbackContract_NewOwnerEvent_eventArgs,
   eventLog
 } from "../generated/src/Types.gen";
-import keccak256 from "keccak256/keccak256";
+
+import keccak256 from "keccak256";
 
 export const ETH_NODE =
   "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae";
@@ -15,8 +16,7 @@ export function makeSubnode(
 ): string {
   let node = byteArrayFromHex(event.params.node);
   let label = byteArrayFromHex(event.params.label);
-
-  return keccak256(uint8ArrayToHexString(concat(node, label))).toString();
+  return keccak256(uint8ArrayToString(concat(node, label))).toString();
 }
 
 export function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
@@ -44,6 +44,15 @@ export function byteArrayFromHex(s: string): Uint8Array {
 // Converts a Uint8Array to a hexadecimal string
 export function uint8ArrayToHexString(bytes: Uint8Array): string {
   return Array.from(bytes, byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function uint8ArrayToString(bytes: Uint8Array): string {
+  const decoder = new TextDecoder();
+  return decoder.decode(bytes).toString();
+}
+
+export function removeNullBytes(input: string): string {
+  return input.replace(/\x00/g, "");
 }
 
 export function uint256ToByteArray(i: BigInt): Uint8Array {
