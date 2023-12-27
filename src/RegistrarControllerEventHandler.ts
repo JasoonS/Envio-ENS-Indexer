@@ -13,14 +13,13 @@ import {
 import {
   AccountEntity,
   DomainEntity,
-  DomainNameMetaEntity,
   EthRegistrarControllerEventSummaryEntity,
   NameRegisteredEntity,
   NameRenewedEntity,
-  OwnershipTransferredEntity
+  OwnershipTransferredEntity,
+  RegistrationEntity
 } from "./src/Types.gen";
-import {byteArrayFromHex, concat, ETH_NODE, uint256ToByteArray, uint8ArrayToHexString} from "./utils";
-import keccak256 from "keccak256/keccak256";
+import {byteArrayFromHex, ETH_NODE, nameHash} from "./utils";
 
 const GLOBAL_EVENTS_SUMMARY_KEY = "GlobalEthRegistrarControllerEventsSummary";
 
@@ -66,22 +65,14 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
 
   let acc: AccountEntity = { id: event.params.owner };
   context.Account.set(acc);
+  let name = event.params.name + ".eth";
+  let node = nameHash(name);
+  let label = nameHash(event.params.label);
 
-  let label = uint256ToByteArray(BigInt(event.transactionIndex));
-  let registration = context.Registration.get(event.params.label);
-  let domain = context.Domain.get(
-    keccak256(uint8ArrayToHexString(concat(rootNode, label))).toString()
-  )!;
-
-  let nameMeta: DomainNameMetaEntity = {
-    domain: domain.id,
-    id: event.params.name
-  };
-
-  domain = <DomainEntity>{
-    id: keccak256(uint8ArrayToHexString(concat(rootNode, label))).toString(),
+  let domain: DomainEntity = {
+    id: node,
     ttl: BigInt(0),
-    name: event.params.name + ".eth",
+    name: name,
     owner: event.params.owner,
     srcAddress: event.srcAddress,
     subdomainCount: 0,
@@ -90,14 +81,16 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
     renewPremium: event.params.premium,
     blockTimestamp: event.blockTimestamp,
     label: event.params.label,
-    registrant: event.params.owner
+    registrant: event.params.owner,
+    parent: null,
+    resolver: null,
+    wrappedOwner: null
   };
 
-  registration = {
-    ...registration,
+  let registration: RegistrationEntity = {
+    id: label,
     cost: BigInt(event.params.baseCost),
-    id: event.params.label,
-    domain: domain.id,
+    domain: node,
     registrationDate: BigInt(event.blockTimestamp),
     expiryDate: event.params.expires,
     registrant: acc.id
@@ -106,7 +99,6 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
   context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
   context.NameRegistered.set(nameRegisteredEntity);
   context.Domain.set(domain);
-  context.DomainNameMeta.set(nameMeta);
   context.Registration.set(registration);
 });
 
@@ -120,10 +112,7 @@ ETHRegistrarControllerContract_NameRenewed_handler(({ event, context }) => {
     GLOBAL_EVENTS_SUMMARY_KEY
   );
   let registration = context.Registration.get(event.params.label)!;
-  let label = uint256ToByteArray(BigInt(event.transactionIndex));
-  let domain = context.Domain.get(
-    keccak256(uint8ArrayToHexString(concat(rootNode, label))).toString()
-  )!;
+  let domain = context.Domain.get(nameHash(event.params.label))!;
 
   registration = {
     ...registration,

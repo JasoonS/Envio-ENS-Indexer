@@ -38,7 +38,6 @@ networks:
               - name: Account
               - name: Domain
               - name: Registration
-              - name: DomainNameMeta
               - name: EthRegistrarControllerEventSummary
           - event: NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires)
             requiredEntities:

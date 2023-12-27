@@ -206,12 +206,6 @@ type Account {
     registrations: [Registration!] @derivedFrom(field: "registrant")
 }
 
-type DomainNameMeta {
-    "The human readable name (imported from CSV), if known"
-    id: ID!
-    domain: Domain!
-}
-
 type WrappedDomain {
     "unique identifier for each instance of the WrappedDomain entity"
     id: ID!
@@ -248,6 +242,7 @@ type Domain  {
     id: ID!
     "The human readable label name (imported from CSV), if known"
     label: String
+    name: String
     "The namehash (id) of the parent name"
     parent: Domain
     "Can count domains from length of array"
@@ -275,6 +270,5 @@ type Domain  {
     baseCost: BigInt
     renewPremium: BigInt
     resolver: String
-    name: DomainNameMeta!
 }
 

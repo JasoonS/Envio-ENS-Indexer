@@ -11,6 +11,24 @@ export const ROOT_NODE =
   "0x0000000000000000000000000000000000000000000000000000000000000000";
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
+export function nameHash(inputName: string): string {
+  let node = "";
+  for (let i = 0; i < 32; i++) {
+    node += "00";
+  }
+
+  if (inputName) {
+    let labels = inputName.split(".");
+
+    for (let i = labels.length - 1; i >= 0; i--) {
+      let labelSha = keccak256(labels[i]);
+      node = keccak256(Buffer.from(node + labelSha, "hex")).toString();
+    }
+  }
+
+  return "0x" + node;
+}
+
 export function makeSubnode(
   event: eventLog<ENSRegistryWithFallbackContract_NewOwnerEvent_eventArgs>
 ): string {

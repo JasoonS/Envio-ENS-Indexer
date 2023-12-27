@@ -17,14 +17,13 @@ import {
 import {
   accountEntity,
   ApprovalForAllEntity,
-  domainEntity,
   ENSRegistryEventsSummaryEntity,
   NewOwnerEntity,
   NewResolverEntity,
   NewTTLEntity,
   TransferEntity
 } from "./src/Types.gen";
-import {EMPTY_ADDRESS, makeSubnode, removeNullBytes, ROOT_NODE} from "./utils";
+import {makeSubnode, nameHash, removeNullBytes} from "./utils";
 
 const GLOBAL_EVENTS_SUMMARY_KEY_1 = "GlobalENSRegistryEventsSummary";
 
@@ -76,33 +75,35 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
   let summary = context.ENSRegistryEventsSummary.get(
     GLOBAL_EVENTS_SUMMARY_KEY_1
   );
-  let subNode = makeSubnode(event);
+  let subNode = removeNullBytes(makeSubnode(event));
   let account = <accountEntity>{ id: event.params.owner };
   let parent = context.Domain.get(event.params.node);
-  let domain = context.Domain.get(removeNullBytes(subNode));
+  let domain = context.Domain.get(subNode);
 
   if (domain?.parent === null && parent !== undefined) {
     parent = {
       ...parent,
       subdomainCount: parent.subdomainCount + 1
     };
+    domain = {
+      ...domain,
+      id: nameHash(event.params.label + "." + parent.name),
+      name: event.params.label + "." + parent.name,
+      ttl: BigInt(0),
+      owner: event.params.owner,
+      srcAddress: event.srcAddress,
+      resolver: null,
+      subdomainCount: 0,
+      blockTimestamp: event.blockTimestamp,
+      parent: parent?.id,
+      expiryDate: parent?.expiryDate,
+      baseCost: parent?.baseCost,
+      renewPremium: parent?.renewPremium,
+      label: event.params.label
+    };
     context.Domain.set(parent);
+    context.Domain.set(domain);
   }
-  let eventDomain = <domainEntity>{
-    id: subNode,
-    ttl: BigInt(0),
-    name: "",
-    owner: event.params.owner,
-    srcAddress: event.srcAddress,
-    resolver: null,
-    subdomainCount: 0,
-    blockTimestamp: event.blockTimestamp,
-    parent: parent?.id,
-    expiryDate: parent?.expiryDate,
-    baseCost: parent?.baseCost,
-    renewPremium: parent?.renewPremium,
-    label: event.params.label
-  };
 
   if (domain !== undefined) {
     domain = {
@@ -112,14 +113,6 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
       label: event.params.label
     };
     context.Domain.set(domain);
-  } else {
-    if (subNode == ROOT_NODE) {
-      domain = <domainEntity>{
-        ...eventDomain,
-        owner: EMPTY_ADDRESS
-      };
-      context.Domain.set(domain);
-    }
   }
 
   let currentSummaryEntity: ENSRegistryEventsSummaryEntity =
