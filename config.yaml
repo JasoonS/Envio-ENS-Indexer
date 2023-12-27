@@ -30,7 +30,7 @@ networks:
               - name: ENSRegistryEventsSummary
       - name: ETHRegistrarController
         address:
-          - "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85"
+          - "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85"
         handler: src/RegistrarControllerEventHandler.ts
         events:
           - event: NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
@@ -50,7 +50,7 @@ networks:
               - name: EthRegistrarControllerEventSummary
       - name: NameWrapper
         address:
-          - "0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401"
+          - "0x114D4603199df73e7D157787f8778E21fCd13066"
         handler: src/NameWrapperHandler.ts
         events:
           - event: Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
