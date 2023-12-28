@@ -6,6 +6,7 @@
     "build": "tsc --build",
     "watch": "tsc --watch",
     "codegen": "envio codegen",
+    "test": "mocha",
     "start": "ts-node generated/src/Index.bs.js"
   },
   "devDependencies": {
@@ -17,8 +18,11 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "envio": "0.0.26",
+    "@types/mocha": "^10.0.6",
+    "envio": "^0.0.26",
+    "js-sha3": "^0.9.3",
     "keccak256": "^1.0.6",
+    "mocha": "^10.2.0",
     "ts-node": "10.9.1"
   }
 }
