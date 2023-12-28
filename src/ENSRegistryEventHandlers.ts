@@ -24,7 +24,8 @@ import {
   NewTTLEntity,
   TransferEntity
 } from "./src/Types.gen";
-import { ETH_NODE, makeSubnode, removeNullBytes } from "./utils";
+
+import { ETH_NODE, nameHashFromLabel } from "./utils";
 
 const GLOBAL_EVENTS_SUMMARY_KEY_1 = "GlobalENSRegistryEventsSummary";
 
@@ -69,14 +70,14 @@ ENSRegistryWithFallbackContract_ApprovalForAll_handler(({ event, context }) => {
 ENSRegistryWithFallbackContract_NewOwner_loader(({ event, context }) => {
   context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_1);
   context.Domain.load(event.params.node, {});
-  context.Domain.load(removeNullBytes(makeSubnode(event).toString()), {});
+  context.Domain.load(nameHashFromLabel(event), {});
 });
 
 ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
   let summary = context.ENSRegistryEventsSummary.get(
     GLOBAL_EVENTS_SUMMARY_KEY_1
   );
-  let subNode = removeNullBytes(makeSubnode(event));
+  let subNode = nameHashFromLabel(event);
   let account = <accountEntity>{ id: event.params.owner };
   let parent = context.Domain.get(event.params.node);
   let domain = context.Domain.get(subNode);
@@ -100,25 +101,18 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
     };
   }
 
-  if (domain?.parent === null && parent !== undefined) {
+  if (domain?.parent === undefined && parent !== undefined) {
     parent = {
       ...parent,
       subdomainCount: parent.subdomainCount + 1
     };
-    // domain = {
-    //     ...domain,
-    //     id: nameHash(event.params.label + "." + parent.name),
-    //     name: event.params.label + "." + parent.name,
-    // };
+
+    domain = { ...domain, id: subNode };
     context.Domain.set(parent);
   }
 
   if (event.params.node == ETH_NODE) {
-    domain = {
-      ...domain,
-      id: event.params.label
-      // name: event.params.label + ".eth",
-    };
+    domain = { ...domain, id: event.params.label };
   }
 
   let currentSummaryEntity: ENSRegistryEventsSummaryEntity =
