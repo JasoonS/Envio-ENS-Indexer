@@ -9,15 +9,12 @@
     "start": "ts-node generated/src/Index.bs.js"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.51.2",
-    "@graphprotocol/graph-ts": "^0.31.0",
     "@types/node": "20.8.8",
-    "assemblyscript": "^0.19.0",
     "rescript": "10.1.4",
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "envio": "0.0.26",
+    "envio": "^0.0.26",
     "keccak256": "^1.0.6",
     "ts-node": "10.9.1"
   }

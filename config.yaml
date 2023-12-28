@@ -1,7 +1,9 @@
 name: ENS-Indexer
 networks:
-  - id: 5
-    start_block: 0
+  - id: 11155111
+    rpc_config:
+      url: "https://rpc.sepolia.org"
+    start_block: 4900000
     contracts:
       - name: ENSRegistryWithFallback
         address:
