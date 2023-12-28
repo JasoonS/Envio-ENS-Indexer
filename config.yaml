@@ -1,6 +1,6 @@
 name: ENS-Indexer
 networks:
-  - id: 1
+  - id: 5
     start_block: 0
     contracts:
       - name: ENSRegistryWithFallback
