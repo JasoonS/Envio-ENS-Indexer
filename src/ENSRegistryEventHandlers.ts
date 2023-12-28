@@ -91,6 +91,7 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
     };
   } else {
     domain = <DomainEntity>{
+      id: event.params.label,
       ttl: BigInt(0),
       owner: event.params.owner,
       srcAddress: event.srcAddress,
