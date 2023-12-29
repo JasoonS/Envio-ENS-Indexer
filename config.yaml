@@ -1,16 +1,14 @@
 name: ENS-Indexer
 networks:
   - id: 1
-    start_block: 0
+    start_block: 3327417
     contracts:
       - name: ENSRegistryWithFallback
         address:
           - "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+          - "0x314159265dD8dbb310642f98f50C066173C1259b"
         handler: src/ENSRegistryEventHandlers.ts
         events:
-          - event: ApprovalForAll(address indexed owner, address indexed operator, bool approved)
-            requiredEntities:
-              - name: ENSRegistryEventsSummary
           - event: NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
             requiredEntities:
               - name: Account
@@ -31,6 +29,8 @@ networks:
       - name: ETHRegistrarController
         address:
           - "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85"
+          - "0x253553366Da8546fC250F225fe3d25d0C782303b"
+          - "0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5"
         handler: src/RegistrarControllerEventHandler.ts
         events:
           - event: NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
@@ -50,18 +50,9 @@ networks:
               - name: EthRegistrarControllerEventSummary
       - name: NameWrapper
         address:
-          - "0x114D4603199df73e7D157787f8778E21fCd13066"
+          - "0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401"
         handler: src/NameWrapperHandler.ts
         events:
-          - event: Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
-            requiredEntities:
-              - name: NameWrapperEventsSummary
-          - event: ApprovalForAll(address indexed account, address indexed operator, bool approved)
-            requiredEntities:
-              - name: NameWrapperEventsSummary
-          - event: ControllerChanged(address indexed controller, bool active)
-            requiredEntities:
-              - name: NameWrapperEventsSummary
           - event: ExpiryExtended(bytes32 indexed node, uint64 expiry)
             requiredEntities:
               - name: NameWrapperEventsSummary
@@ -86,8 +77,5 @@ networks:
             requiredEntities:
               - name: NameWrapperEventsSummary
           - event: TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)
-            requiredEntities:
-              - name: NameWrapperEventsSummary
-          - event: URI(string value, uint256 indexed id)
             requiredEntities:
               - name: NameWrapperEventsSummary
