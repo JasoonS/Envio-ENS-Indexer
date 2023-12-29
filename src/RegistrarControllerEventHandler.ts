@@ -33,7 +33,6 @@ const INITIAL_EVENTS_SUMMARY: EthRegistrarControllerEventSummaryEntity = {
 
 ETHRegistrarControllerContract_NameRegistered_loader(({event, context}) => {
     context.EthRegistrarControllerEventSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-    // context.Registration.load(event.params.label, {});
     context.Domain.load(makeSubnode(ETH_NODE, event.params.label), {});
 });
 
@@ -62,9 +61,9 @@ ETHRegistrarControllerContract_NameRegistered_handler(({event, context}) => {
     };
 
     let subNode = makeSubnode(ETH_NODE, event.params.label)
-    let domain = context.Domain.get(subNode)!;
+    let domain = context.Domain.get(subNode);
+
     let acc: AccountEntity = {id: event.params.owner};
-    context.Account.set(acc);
 
     let name = event.params.name + ".eth";
     let node = nameHash(name);
@@ -116,11 +115,13 @@ ETHRegistrarControllerContract_NameRegistered_handler(({event, context}) => {
 
     context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
     context.NameRegistered.set(nameRegisteredEntity);
+    context.Account.set(acc);
     context.Domain.set(domain);
     context.Registration.set(registration);
 });
 
 ETHRegistrarControllerContract_NameRenewed_loader(({event, context}) => {
+    context.Domain.load(makeSubnode(ETH_NODE, event.params.label), {});
     context.EthRegistrarControllerEventSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
     context.Registration.load(event.params.label, {});
 });
@@ -130,7 +131,7 @@ ETHRegistrarControllerContract_NameRenewed_handler(({event, context}) => {
         GLOBAL_EVENTS_SUMMARY_KEY
     );
     let registration = context.Registration.get(event.params.label)!;
-    let domain = context.Domain.get(event.params.label)!;
+    let domain = context.Domain.get(makeSubnode(ETH_NODE, event.params.label))!;
 
     registration = {
         ...registration,
