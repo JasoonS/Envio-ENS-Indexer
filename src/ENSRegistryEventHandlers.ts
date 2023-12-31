@@ -22,7 +22,7 @@ import {
     TransferEntity
 } from "./src/Types.gen";
 
-import {ETH_NODE, makeSubnode} from "./utils";
+import { ETH_NODE, makeSubnode } from "./utils";
 
 const GLOBAL_EVENTS_SUMMARY_KEY_1 = "GlobalENSRegistryEventsSummary";
 
@@ -34,18 +34,18 @@ const INITIAL_EVENTS_SUMMARY: ENSRegistryEventsSummaryEntity = {
     newTTLsCount: BigInt(0),
     transfersCount: BigInt(0)
 };
-ENSRegistryWithFallbackContract_NewOwner_loader(({event, context}) => {
+ENSRegistryWithFallbackContract_NewOwner_loader(({ event, context }) => {
     context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_1);
     context.Domain.load(event.params.node, {});
     context.Domain.load(makeSubnode(event.params.node, event.params.label), {});
 });
 
-ENSRegistryWithFallbackContract_NewOwner_handler(({event, context}) => {
+ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
     let summary = context.ENSRegistryEventsSummary.get(
         GLOBAL_EVENTS_SUMMARY_KEY_1
     );
     let subNode = makeSubnode(event.params.node, event.params.label);
-    let account = <accountEntity>{id: event.params.owner};
+    let account = <accountEntity>{ id: event.params.owner };
     let parent = context.Domain.get(event.params.node);
     let domain = context.Domain.get(subNode);
 
@@ -56,6 +56,7 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({event, context}) => {
             owner: event.params.owner,
             label: event.params.label
         };
+        context.Domain.set(domain);
     } else {
         domain = <DomainEntity>{
             id: event.params.label,
@@ -67,6 +68,7 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({event, context}) => {
             resolver: null,
             subdomainCount: 0
         };
+        context.Domain.set(domain);
     }
 
     if (domain?.parent === undefined && parent !== undefined) {
@@ -75,12 +77,14 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({event, context}) => {
             subdomainCount: parent.subdomainCount + 1
         };
 
-        domain = {...domain, id: subNode, parent: event.params.node};
+        domain = { ...domain, id: subNode, parent: event.params.node };
         context.Domain.set(parent);
+        context.Domain.set(domain);
     }
 
     if (event.params.node == ETH_NODE) {
-        domain = {...domain, id: event.params.label};
+        domain = { ...domain, id: event.params.label };
+        context.Domain.set(domain);
     }
 
     let currentSummaryEntity: ENSRegistryEventsSummaryEntity =
@@ -100,24 +104,23 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({event, context}) => {
     };
 
     context.Account.set(account);
-    context.Domain.set(domain);
     context.ENSRegistryEventsSummary.set(nextSummaryEntity);
     context.NewOwner.set(newOwnerEntity);
 });
 
-ENSRegistryWithFallbackContract_NewResolver_loader(({event, context}) => {
+ENSRegistryWithFallbackContract_NewResolver_loader(({ event, context }) => {
     context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_1);
-    context.Domain.load(event.params.node, {loaders: {}});
+    context.Domain.load(event.params.node, { loaders: {} });
 });
 
-ENSRegistryWithFallbackContract_NewResolver_handler(({event, context}) => {
+ENSRegistryWithFallbackContract_NewResolver_handler(({ event, context }) => {
     let summary = context.ENSRegistryEventsSummary.get(
         GLOBAL_EVENTS_SUMMARY_KEY_1
     );
     let domain = context.Domain.get(event.params.node);
 
     if (domain !== undefined) {
-        domain = {...domain, resolver: event.params.resolver};
+        domain = { ...domain, resolver: event.params.resolver };
         context.Domain.set(domain);
     }
 
@@ -140,19 +143,19 @@ ENSRegistryWithFallbackContract_NewResolver_handler(({event, context}) => {
     context.NewResolver.set(newResolverEntity);
 });
 
-ENSRegistryWithFallbackContract_NewTTL_loader(({event, context}) => {
+ENSRegistryWithFallbackContract_NewTTL_loader(({ event, context }) => {
     context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_1);
-    context.Domain.load(event.params.node, {loaders: {}});
+    context.Domain.load(event.params.node, { loaders: {} });
 });
 
-ENSRegistryWithFallbackContract_NewTTL_handler(({event, context}) => {
+ENSRegistryWithFallbackContract_NewTTL_handler(({ event, context }) => {
     let summary = context.ENSRegistryEventsSummary.get(
         GLOBAL_EVENTS_SUMMARY_KEY_1
     );
     let domain = context.Domain.get(event.params.node);
 
     if (domain !== undefined) {
-        domain = {...domain, ttl: event.params.ttl};
+        domain = { ...domain, ttl: event.params.ttl };
         context.Domain.set(domain);
     }
 
@@ -175,12 +178,12 @@ ENSRegistryWithFallbackContract_NewTTL_handler(({event, context}) => {
     context.NewTTL.set(newTTLEntity);
 });
 
-ENSRegistryWithFallbackContract_Transfer_loader(({event, context}) => {
+ENSRegistryWithFallbackContract_Transfer_loader(({ event, context }) => {
     context.ENSRegistryEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY_1);
-    context.Domain.load(event.params.node, {loaders: {}});
+    context.Domain.load(event.params.node, { loaders: {} });
 });
 
-ENSRegistryWithFallbackContract_Transfer_handler(({event, context}) => {
+ENSRegistryWithFallbackContract_Transfer_handler(({ event, context }) => {
     let summary = context.ENSRegistryEventsSummary.get(
         GLOBAL_EVENTS_SUMMARY_KEY_1
     );
@@ -188,7 +191,7 @@ ENSRegistryWithFallbackContract_Transfer_handler(({event, context}) => {
     let domain = context.Domain.get(event.params.node);
 
     if (domain !== undefined) {
-        domain = {...domain, owner: event.params.owner};
+        domain = { ...domain, owner: event.params.owner };
         context.Domain.set(domain);
     }
 
