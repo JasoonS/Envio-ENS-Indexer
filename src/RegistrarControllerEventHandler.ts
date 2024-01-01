@@ -60,6 +60,9 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
         eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY
     };
 
+    context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
+    context.NameRegistered.set(nameRegisteredEntity);
+
     let subNode = makeSubnode(ETH_NODE, event.params.label)
     let domain = context.Domain.get(subNode);
 
@@ -113,8 +116,6 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
         registrant: acc.id
     };
 
-    context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
-    context.NameRegistered.set(nameRegisteredEntity);
     context.Account.set(acc);
     context.Domain.set(domain);
     context.Registration.set(registration);
@@ -130,20 +131,6 @@ ETHRegistrarControllerContract_NameRenewed_handler(({ event, context }) => {
     let summary = context.EthRegistrarControllerEventSummary.get(
         GLOBAL_EVENTS_SUMMARY_KEY
     );
-    let registration = context.Registration.get(event.params.label)!;
-    let domain = context.Domain.get(makeSubnode(ETH_NODE, event.params.label))!;
-
-    registration = {
-        ...registration,
-        expiryDate: event.params.expires
-    };
-    context.Registration.set(registration);
-
-    domain = {
-        ...domain,
-        expiryDate: BigInt(event.params.expires + GRACE_PERIOD_SECONDS)
-    };
-    context.Domain.set(domain);
 
     let currentSummaryEntity: EthRegistrarControllerEventSummaryEntity =
         summary ?? INITIAL_EVENTS_SUMMARY;
@@ -164,6 +151,23 @@ ETHRegistrarControllerContract_NameRenewed_handler(({ event, context }) => {
 
     context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
     context.NameRenewed.set(nameRenewedEntity);
+
+
+    let registration = context.Registration.get(event.params.label)!;
+    let domain = context.Domain.get(makeSubnode(ETH_NODE, event.params.label))!;
+
+    registration = {
+        ...registration,
+        expiryDate: event.params.expires
+    };
+    context.Registration.set(registration);
+
+    domain = {
+        ...domain,
+        expiryDate: BigInt(event.params.expires + GRACE_PERIOD_SECONDS)
+    };
+    context.Domain.set(domain);
+
 });
 
 ETHRegistrarControllerContract_OwnershipTransferred_loader(
