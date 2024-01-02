@@ -1,7 +1,7 @@
 name: ENS-Indexer
 networks:
   - id: 1
-    start_block: 3327417
+    start_block: 0
     contracts:
       - name: ENSRegistryWithFallback
         address:
