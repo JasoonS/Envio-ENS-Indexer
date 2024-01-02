@@ -63,47 +63,30 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
     context.EthRegistrarControllerEventSummary.set(nextSummaryEntity);
     context.NameRegistered.set(nameRegisteredEntity);
 
-    let subNode = makeSubnode(ETH_NODE, event.params.label)
-    let domain = context.Domain.get(subNode);
+    /*   let subNode = makeSubnode(ETH_NODE, event.params.label)
+      let domain = context.Domain.get(subNode)!; */
 
     let acc: AccountEntity = { id: event.params.owner };
 
     let name = event.params.name + ".eth";
     let node = nameHash(name);
 
-    if (domain !== undefined) {
-        domain = {
-            ...domain,
-            registrant: event.params.owner,
-            expiryDate: BigInt(event.params.expires + GRACE_PERIOD_SECONDS),
-            label: event.params.label,
-            baseCost: event.params.baseCost,
-            renewPremium: event.params.premium,
-            name: event.params.name + ".eth",
-            owner: event.params.owner,
-        }
-        /*
-        * res = NameByHash(event.params.label)
-        * set domain = {...domain, name: res + ".eth"}
-        * registration.labelName = labelName*/
-    } else {
-        domain = <DomainEntity>{
-            label: event.params.label,
-            registrant: event.params.owner,
-            subdomainCount: 0,
-            ttl: BigInt(0),
-            expiryDate: BigInt(event.params.expires + GRACE_PERIOD_SECONDS),
-            baseCost: event.params.baseCost,
-            renewPremium: event.params.premium,
-            blockTimestamp: event.blockTimestamp,
-            name: event.params.name + ".eth",
-            owner: event.params.owner,
-            srcAddress: event.srcAddress,
-            id: node,
-            parent: null,
-            resolver: null,
-            wrappedOwner: null
-        };
+    let domain = <DomainEntity>{
+        id: node,
+        registrant: event.params.owner,
+        expiryDate: BigInt(event.params.expires + GRACE_PERIOD_SECONDS),
+        label: event.params.label,
+        baseCost: event.params.baseCost,
+        renewPremium: event.params.premium,
+        name: event.params.name + ".eth",
+        owner: event.params.owner,
+        srcAddress: event.srcAddress,
+        blockTimestamp: event.blockTimestamp,
+        subdomainCount: 0,
+        ttl: BigInt(0),
+        parent: null,
+        resolver: null,
+        wrappedOwner: null
     }
 
 
