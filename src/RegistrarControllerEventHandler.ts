@@ -33,7 +33,7 @@ const INITIAL_EVENTS_SUMMARY: EthRegistrarControllerEventSummaryEntity = {
 
 ETHRegistrarControllerContract_NameRegistered_loader(({ event, context }) => {
     context.EthRegistrarControllerEventSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-    context.Domain.load(makeSubnode(ETH_NODE, event.params.label), {});
+    // context.Domain.load(makeSubnode(ETH_NODE, event.params.label), {});
 });
 
 ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
@@ -66,7 +66,6 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
     /*   let subNode = makeSubnode(ETH_NODE, event.params.label)
       let domain = context.Domain.get(subNode)!; */
 
-    let acc: AccountEntity = { id: event.params.owner };
 
     let name = event.params.name + ".eth";
     let node = nameHash(name);
@@ -90,6 +89,7 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
     }
 
 
+    let acc: AccountEntity = { id: event.params.owner };
     let registration: RegistrationEntity = {
         id: event.params.label,
         cost: BigInt(event.params.baseCost),

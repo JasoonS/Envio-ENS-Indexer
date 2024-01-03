@@ -79,7 +79,7 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({event, context}) => {
         context.Domain.set(domain);
     } else {
         domain = <DomainEntity>{
-            id: event.params.label,
+            id: subNode,
             ttl: BigInt(0),
             owner: event.params.owner,
             srcAddress: event.srcAddress,
@@ -88,6 +88,11 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({event, context}) => {
             resolver: null,
             subdomainCount: 0
         };
+        context.Domain.set(domain);
+    }
+    
+    if (event.params.node == ETH_NODE) {
+        domain = { ...domain, id: event.params.label };
         context.Domain.set(domain);
     }
 
@@ -102,10 +107,7 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({event, context}) => {
         context.Domain.set(domain);
     }
 
-    if (event.params.node == ETH_NODE) {
-        domain = {...domain, id: event.params.label};
-        context.Domain.set(domain);
-    }
+
     context.Account.set(account);
 });
 
