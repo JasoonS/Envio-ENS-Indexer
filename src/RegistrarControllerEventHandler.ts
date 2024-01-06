@@ -70,21 +70,22 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
     let name = event.params.name + ".eth";
     let node = nameHash(name);
 
-    let domain = <DomainEntity>{
+    let domain: DomainEntity = {
+        createdAt: BigInt(event.blockTimestamp),
+        isMigrated: true,
+        labelName: event.params.name,
+        resolvedAddress: null,
         id: node,
         registrant: event.params.owner,
         expiryDate: BigInt(event.params.expires + GRACE_PERIOD_SECONDS),
-        label: event.params.label,
+        labelhash: event.params.label,
         baseCost: event.params.baseCost,
         renewPremium: event.params.premium,
         name: event.params.name + ".eth",
         owner: event.params.owner,
-        srcAddress: event.srcAddress,
-        blockTimestamp: event.blockTimestamp,
         subdomainCount: 0,
         ttl: BigInt(0),
         parent: null,
-        resolver: null,
         wrappedOwner: null
     }
 
