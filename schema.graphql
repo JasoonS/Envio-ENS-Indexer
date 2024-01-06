@@ -56,8 +56,16 @@ type EthRegistrarControllerEventSummary {
     nameRegisteredsCount: BigInt!
     nameRenewed: [NameRenewed!]! @derivedFrom(field: "eventsSummary")
     nameRenewedsCount: BigInt!
-    ownershipTransferred: [OwnershipTransferred!]! @derivedFrom(field: "eventsSummary")
-    ownershipTransferredsCount: BigInt!
+    baseRegistrar_NameRegistered: [BaseRegistrar_NameRegistered!]! @derivedFrom(field: "eventsSummary")
+    baseRegistrar_NameRegisteredCount: BigInt!
+    baseRegistrar_NameRenewed: [BaseRegistrar_NameRenewed!]! @derivedFrom(field: "eventsSummary")
+    baseRegistrar_NameRenewedCount: BigInt!
+    baseRegistrar_Transfer: [BaseRegistrar_Transfer!]! @derivedFrom(field: "eventsSummary")
+    baseRegistrar_TransferCount: BigInt!
+    ethRegistrarControllerOld_NameRegistered: [EthRegistrarControllerOld_NameRegistered!]! @derivedFrom(field: "eventsSummary")
+    ethRegistrarControllerOld_NameRegisteredCount: BigInt!
+    ethRegistrarControllerOld_NameRenewed: [EthRegistrarControllerOld_NameRenewed!]! @derivedFrom(field: "eventsSummary")
+    ethRegistrarControllerOld_NameRenewedCount: BigInt!
 }
 
 type NameRegistered {
@@ -72,6 +80,45 @@ type NameRegistered {
 }
 
 type NameRenewed {
+    id: ID!
+    name: String!
+    label: String!
+    cost: BigInt!
+    expires: BigInt!
+    eventsSummary: String!
+}
+
+type BaseRegistrar_NameRegistered {
+    id: ID!
+    eventId: BigInt!
+    owner: String!
+    expires: BigInt!
+    eventsSummary: String!
+}
+type BaseRegistrar_NameRenewed {
+    id: ID!
+    eventId: BigInt!
+    expires: BigInt!
+    eventsSummary: String!
+}
+type BaseRegistrar_Transfer {
+    id: ID!
+    from: String!
+    to: String!
+    tokenId: BigInt!
+    eventsSummary: String!
+}
+
+type EthRegistrarControllerOld_NameRegistered {
+    id: ID!
+    name: String!
+    label: String!
+    owner: String!
+    cost: BigInt!
+    expires: BigInt!
+    eventsSummary: String!
+}
+type EthRegistrarControllerOld_NameRenewed {
     id: ID!
     name: String!
     label: String!
@@ -109,8 +156,6 @@ type NameWrapperEventsSummary {
     transferBatchsCount: BigInt!
     transferSingle: [TransferSingle!]! @derivedFrom(field: "eventsSummary")
     transferSinglesCount: BigInt!
-    uRI: [URI!]! @derivedFrom(field: "eventsSummary")
-    uRIsCount: BigInt!
 }
 
 type Approval {
@@ -187,10 +232,94 @@ type TransferSingle {
     eventsSummary: String!
 }
 
-type URI {
+type ResolverEventsSummary {
     id: ID!
-    value: String!
-    eventId: BigInt!
+    resolver_ABIChanged: [Resolver_ABIChanged!]! @derivedFrom(field: "eventsSummary")
+    resolver_ABIChangedCount: BigInt!
+    resolver_AddrChanged: [Resolver_AddrChanged!]! @derivedFrom(field: "eventsSummary")
+    resolver_AddrChangedCount: BigInt!
+    resolver_AddressChanged: [Resolver_AddressChanged!]! @derivedFrom(field: "eventsSummary")
+    resolver_AddressChangedCount: BigInt!
+    resolver_AuthorisationChanged: [Resolver_AuthorisationChanged!]! @derivedFrom(field: "eventsSummary")
+    resolver_AuthorisationChangedCount: BigInt!
+    resolver_ContenthashChanged: [Resolver_ContenthashChanged!]! @derivedFrom(field: "eventsSummary")
+    resolver_ContenthashChangedCount: BigInt!
+    resolver_InterfaceChanged: [Resolver_InterfaceChanged!]! @derivedFrom(field: "eventsSummary")
+    resolver_InterfaceChangedCount: BigInt!
+    resolver_NameChanged: [Resolver_NameChanged!]! @derivedFrom(field: "eventsSummary")
+    resolver_NameChangedCount: BigInt!
+    resolver_PubkeyChanged: [Resolver_PubkeyChanged!]! @derivedFrom(field: "eventsSummary")
+    resolver_PubkeyChangedCount: BigInt!
+    resolver_TextChanged: [Resolver_TextChanged!]! @derivedFrom(field: "eventsSummary")
+    resolver_TextChangedCount: BigInt!
+    resolver_VersionChanged: [Resolver_VersionChanged!]! @derivedFrom(field: "eventsSummary")
+    resolver_VersionChangedCount: BigInt!
+}
+
+type Resolver_ABIChanged {
+    id: ID!
+    node: String!
+    contentType: BigInt!
+    eventsSummary: String!
+}
+type Resolver_AddrChanged {
+    id: ID!
+    node: String!
+    a: String!
+    eventsSummary: String!
+}
+type Resolver_AddressChanged {
+    id: ID!
+    node: String!
+    coinType: BigInt!
+    newAddress: String!
+    eventsSummary: String!
+}
+type Resolver_AuthorisationChanged {
+    id: ID!
+    node: String!
+    owner: String!
+    target: String!
+    isAuthorised: Boolean!
+    eventsSummary: String!
+}
+type Resolver_ContenthashChanged {
+    id: ID!
+    node: String!
+    hash: String!
+    eventsSummary: String!
+}
+type Resolver_InterfaceChanged {
+    id: ID!
+    node: String!
+    interfaceID: String!
+    implementer: String!
+    eventsSummary: String!
+}
+type Resolver_NameChanged {
+    id: ID!
+    node: String!
+    name: String!
+    eventsSummary: String!
+}
+type Resolver_PubkeyChanged {
+    id: ID!
+    node: String!
+    x: String!
+    y: String!
+    eventsSummary: String!
+}
+type Resolver_TextChanged {
+    id: ID!
+    node: String!
+    indexedKey: String!
+    key: String!
+    eventsSummary: String!
+}
+type Resolver_VersionChanged {
+    id: ID!
+    node: String!
+    newVersion: BigInt!
     eventsSummary: String!
 }
 

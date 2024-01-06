@@ -26,11 +26,46 @@ networks:
             requiredEntities:
               - name: Domain
               - name: ENSRegistryEventsSummary
+      - name: BaseRegistrar
+        address:
+          - "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85"
+        handler: src/RegistrarControllerEventHandler.ts
+        events:
+          - event: NameRegistered(uint256 indexed id, address indexed owner, uint256 expires)
+            requiredEntities:
+              - name: Account
+              - name: Domain
+              - name: Registration
+              - name: EthRegistrarControllerEventSummary
+          - event: NameRenewed(uint256 indexed id, uint256 expires)
+            requiredEntities:
+              - name: Account
+              - name: Domain
+              - name: Registration
+              - name: EthRegistrarControllerEventSummary
+          - event: Transfer(address indexed from, address indexed to, uint256 indexed tokenId)
+            requiredEntities:
+              - name: EthRegistrarControllerEventSummary
+      - name: EthRegistrarControllerOld
+        address:
+          - "0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5"
+        handler: src/RegistrarControllerEventHandler.ts
+        events:
+          - event: NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 cost, uint256 expires)
+            requiredEntities:
+              - name: Account
+              - name: Domain
+              - name: Registration
+              - name: EthRegistrarControllerEventSummary
+          - event: NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires)
+            requiredEntities:
+              - name: Account
+              - name: Domain
+              - name: Registration
+              - name: EthRegistrarControllerEventSummary
       - name: ETHRegistrarController
         address:
-          - "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85"
           - "0x253553366Da8546fC250F225fe3d25d0C782303b"
-          - "0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5"
         handler: src/RegistrarControllerEventHandler.ts
         events:
           - event: NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
@@ -44,9 +79,6 @@ networks:
               - name: Account
               - name: Domain
               - name: Registration
-              - name: EthRegistrarControllerEventSummary
-          - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-            requiredEntities:
               - name: EthRegistrarControllerEventSummary
       - name: NameWrapper
         address:
@@ -79,3 +111,38 @@ networks:
           - event: TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)
             requiredEntities:
               - name: NameWrapperEventsSummary
+      - name: Resolver
+        address:
+          - "0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63"
+        handler: src/EventHandlers.ts
+        events:
+          - event: ABIChanged(bytes32 indexed node, uint256 indexed contentType)
+            requiredEntities:
+              - name: ResolverEventsSummary
+          - event: AddrChanged(bytes32 indexed node, address a)
+            requiredEntities:
+              - name: ResolverEventsSummary
+          - event: AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
+            requiredEntities:
+              - name: ResolverEventsSummary
+          - event: AuthorisationChanged(bytes32 indexed node, address indexed owner, address indexed target, bool isAuthorised)
+            requiredEntities:
+              - name: ResolverEventsSummary
+          - event: ContenthashChanged(bytes32 indexed node, bytes hash)
+            requiredEntities:
+              - name: ResolverEventsSummary
+          - event: InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
+            requiredEntities:
+              - name: ResolverEventsSummary
+          - event: NameChanged(bytes32 indexed node, string name)
+            requiredEntities:
+              - name: ResolverEventsSummary
+          - event: PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
+            requiredEntities:
+              - name: ResolverEventsSummary
+          - event: TextChanged(bytes32 indexed node, string indexed indexedKey, string key)
+            requiredEntities:
+              - name: ResolverEventsSummary
+          - event: VersionChanged(bytes32 indexed node, uint64 newVersion)
+            requiredEntities:
+              - name: ResolverEventsSummary
