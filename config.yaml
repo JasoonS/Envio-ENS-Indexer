@@ -114,22 +114,26 @@ networks:
       - name: Resolver
         address:
           - "0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63"
-        handler: src/EventHandlers.ts
+        handler: src/EnsResolverHandler.ts
         events:
           - event: ABIChanged(bytes32 indexed node, uint256 indexed contentType)
             requiredEntities:
               - name: ResolverEventsSummary
           - event: AddrChanged(bytes32 indexed node, address a)
             requiredEntities:
+              - name: Resolver
+              - name: Domain
               - name: ResolverEventsSummary
           - event: AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
             requiredEntities:
+              - name: Resolver
               - name: ResolverEventsSummary
           - event: AuthorisationChanged(bytes32 indexed node, address indexed owner, address indexed target, bool isAuthorised)
             requiredEntities:
               - name: ResolverEventsSummary
           - event: ContenthashChanged(bytes32 indexed node, bytes hash)
             requiredEntities:
+              - name: Resolver
               - name: ResolverEventsSummary
           - event: InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
             requiredEntities:
@@ -142,7 +146,13 @@ networks:
               - name: ResolverEventsSummary
           - event: TextChanged(bytes32 indexed node, string indexed indexedKey, string key)
             requiredEntities:
+              - name: Resolver
               - name: ResolverEventsSummary
+          #TODO, How to Handle Event of Same Name but Different Signatures?
+          #          - event: TextChanged(indexed bytes32,indexed string,string,string)
+          #            requiredEntities:
+          #              - name: Resolver
+          #              - name: ResolverEventsSummary
           - event: VersionChanged(bytes32 indexed node, uint64 newVersion)
             requiredEntities:
               - name: ResolverEventsSummary

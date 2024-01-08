@@ -1,4 +1,4 @@
-import {keccak_256} from "js-sha3";
+import { keccak_256 } from "js-sha3";
 
 export const GRACE_PERIOD_SECONDS = BigInt(7776000); // 90 days
 
@@ -27,4 +27,9 @@ export function makeSubnode(eventNode: string, eventLabel: string): string {
     node = keccak_256(Buffer.from(node + label, "hex"));
 
     return "0x" + node;
+}
+
+export function createResolverID(address: string, node: string): string {
+    let resolverID = address.concat("-").concat(node)
+    return resolverID
 }

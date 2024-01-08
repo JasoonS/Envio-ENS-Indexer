@@ -366,6 +366,25 @@ type Registration  {
 }
 
 
+type Resolver  {
+    "The unique identifier for this resolver, which is a concatenation of the resolver address and the domain namehash"
+    id: ID!
+    "The domain that this resolver is associated with"
+    domain: Domain
+    "The address of the resolver contract"
+    address: String!
+    "The current value of the 'addr' record for this resolver, as determined by the associated events"
+    addr: Account
+    "The content hash for this resolver, in binary format"
+    contentHash: String
+    "The set of observed text record keys for this resolver"
+    texts: [String!]
+    "The set of observed SLIP-44 coin types for this resolver"
+    coinTypes: [BigInt!]
+    #    "The events associated with this resolver"
+    #    events: [ResolverEvent!]! @derivedFrom(field: "resolver")
+}
+
 type Domain {
     "The namehash of the name"
     id: ID!
@@ -410,8 +429,8 @@ type Domain {
     baseCost: BigInt
     renewPremium: BigInt
 
-    # "The resolver that controls the domain's settings"
-    # resolver: Resolver
+    "The resolver that controls the domain's settings"
+    resolver: Resolver
 
     #  "The events associated with the domain"
     #  events: [DomainEvent!]! @derivedFrom(field: "domain")
