@@ -6,11 +6,7 @@ import {
 } from "../../generated/src/TestHelpers.gen";
 import { Addresses } from "../../generated/src/bindings/Ethers.gen";
 import { it } from "node:test";
-import {
-  AccountEntity,
-  DomainEntity,
-  RegistrationEntity
-} from "../../generated/src/Types.gen";
+import { AccountEntity, DomainEntity, RegistrationEntity } from "../../generated/src/Types.gen";
 import assert from "assert";
 import { GRACE_PERIOD_SECONDS } from "../utils";
 import { t as mockDBType } from "../../generated/src/TestHelpers_MockDb.gen";
@@ -53,19 +49,20 @@ export const mockNameRegistered = (mockDbInitial: mockDBType): mockDBType => {
   const exAccountEntity: AccountEntity = { id: Addresses.defaultAddress };
 
   const exNameRegisteredEntity: DomainEntity = {
+    createdAt: BigInt(mockNameRegisteredEvent.blockTimestamp), isMigrated: true,
+    labelName: "vibraciones",
+    labelhash: mockNameRegisteredEvent.params.label,
+    resolvedAddress: null,
     id: "0x000447a4d61a90d054b5e101f3c94c5c8819b7840e5a5442e07a21bc1c8c30b8",
     ttl: BigInt(0),
     name: "vibraciones.eth",
     owner: Addresses.defaultAddress,
-    srcAddress: mockNameRegisteredEvent.srcAddress,
     subdomainCount: 0,
     expiryDate: BigInt(
       mockNameRegisteredEvent.params.expires + GRACE_PERIOD_SECONDS
     ),
     baseCost: mockNameRegisteredEvent.params.baseCost,
     renewPremium: mockNameRegisteredEvent.params.premium,
-    blockTimestamp: mockNameRegisteredEvent.blockTimestamp,
-    label: mockNameRegisteredEvent.params.label,
     registrant: Addresses.defaultAddress,
     parent: null,
     resolver: null,

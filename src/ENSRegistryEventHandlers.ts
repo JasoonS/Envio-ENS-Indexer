@@ -23,7 +23,7 @@ import {
     TransferEntity
 } from "./src/Types.gen";
 
-import { createResolverID, makeSubnode, ROOT_NODE } from "./utils";
+import { createResolverID, ETH_NODE, makeSubnode } from "./utils";
 
 const GLOBAL_EVENTS_SUMMARY_KEY_1 = "GlobalENSRegistryEventsSummary";
 
@@ -84,8 +84,9 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
             isMigrated: true,
             labelName: null,
             name: null,
-            parent: null,
+            parent: event.params.node,
             registrant: null,
+            resolver: null,
             renewPremium: null,
             resolvedAddress: null,
             wrappedOwner: null,
@@ -98,8 +99,8 @@ ENSRegistryWithFallbackContract_NewOwner_handler(({ event, context }) => {
         };
     }
 
-    if (event.params.node == ROOT_NODE) {
-        domain = { ...domain, id: subNode };
+    if (event.params.node == ETH_NODE) {
+        domain = { ...domain, id: subNode, parent: event.params.node };
     }
 
     if (domain?.parent === undefined && parent !== undefined) {

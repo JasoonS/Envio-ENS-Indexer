@@ -3,11 +3,11 @@ import {
     ENSRegistryWithFallback_NewOwner_processEvent,
     MockDb
 } from "../../generated/src/TestHelpers.gen";
-import {Addresses} from "../../generated/src/bindings/Ethers.gen";
-import {it} from "node:test";
-import {AccountEntity, DomainEntity} from "../../generated/src/Types.gen";
+import { Addresses } from "../../generated/src/bindings/Ethers.gen";
+import { it } from "node:test";
+import { AccountEntity, DomainEntity } from "../../generated/src/Types.gen";
 import assert from "assert";
-import {mockNameRegistered} from "./nameRegistered.spec";
+import { mockNameRegistered } from "./nameRegistered.spec";
 
 it("test SubDomain Creation Success", () => {
     // Initializing the mock database
@@ -29,17 +29,25 @@ it("test SubDomain Creation Success", () => {
     });
 
     // Expected entity that should be created
-    const exAccountEntity: AccountEntity = {id: Addresses.defaultAddress};
+    const exAccountEntity: AccountEntity = { id: Addresses.defaultAddress };
 
-    const exNameRegisteredEntity = <DomainEntity>{
+    const exNameRegisteredEntity: DomainEntity = {
+        baseCost: null,
+        createdAt: BigInt(mockNewOwnerEvent.blockTimestamp),
+        expiryDate: null,
+        isMigrated: true,
+        labelName: null,
+        labelhash: mockNewOwnerEvent.params.label,
+        name: null,
+        registrant: null,
+        renewPremium: null,
+        resolvedAddress: null,
+        wrappedOwner: null,
         id: "0xfe249fe2dc089c4f2b43756b49c3c329774a0b99dea3e1c3e56ce6ab093f16a5",
         ttl: BigInt(0),
         owner: Addresses.defaultAddress,
-        srcAddress: mockNewOwnerEvent.srcAddress,
         subdomainCount: 0,
-        blockTimestamp: mockNewOwnerEvent.blockTimestamp,
         parent: "0x000447a4d61a90d054b5e101f3c94c5c8819b7840e5a5442e07a21bc1c8c30b8",
-        label: mockNewOwnerEvent.params.label,
         resolver: null
     };
 
@@ -51,7 +59,6 @@ it("test SubDomain Creation Success", () => {
     // TODO Check Parent SubdomainCount is 1
     // TODO Reverse Lookups on Account for Domains?
     // TODO Reverse Lookups on Account for Domains?
-
     // Asserting that the entity in the mock database is the same as the ex entity
     assert.deepEqual(exNameRegisteredEntity, domEntity);
 });
