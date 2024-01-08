@@ -17,6 +17,7 @@ networks:
           - event: NewResolver(bytes32 indexed node, address resolver)
             requiredEntities:
               - name: Domain
+              - name: Resolver
               - name: ENSRegistryEventsSummary
           - event: NewTTL(bytes32 indexed node, uint64 ttl)
             requiredEntities:

@@ -1,6 +1,7 @@
 /*
  *Please refer to https://docs.envio.dev for a thorough guide on all Envio indexer features*
  */
+import { resolve } from "path";
 import {
     ENSRegistryWithFallbackContract_NewOwner_handler,
     ENSRegistryWithFallbackContract_NewOwner_loader,
@@ -19,10 +20,11 @@ import {
     NewOwnerEntity,
     NewResolverEntity,
     NewTTLEntity,
+    ResolverEntity,
     TransferEntity
 } from "./src/Types.gen";
 
-import { makeSubnode, ROOT_NODE } from "./utils";
+import { createResolverID, makeSubnode, ROOT_NODE } from "./utils";
 
 const GLOBAL_EVENTS_SUMMARY_KEY_1 = "GlobalENSRegistryEventsSummary";
 
@@ -170,13 +172,35 @@ ENSRegistryWithFallbackContract_NewResolver_handler(({ event, context }) => {
     context.ENSRegistryEventsSummary.set(nextSummaryEntity);
     context.NewResolver.set(newResolverEntity);
 
-    let domain = context.Domain.get(event.params.node);
+    let id: string | null;
 
-    if (domain !== undefined) {
-        //TODO inaccurate
-        domain = { ...domain, resolvedAddress: event.params.resolver };
-        context.Domain.set(domain);
+    if (event.params.resolver == "0x0000000000000000000000000000000000000000") {
+        id = null;
+    } else {
+        id = createResolverID(event.params.resolver, event.params.node)
     }
+
+    let domain = context.Domain.get(event.params.node)!;
+
+    if (id) {
+        let resolver = context.Resolver.get(id);
+        if (resolver === undefined) {
+            resolver = <ResolverEntity>{
+                address: event.params.resolver,
+                domain: event.params.node,
+                id: id,
+            }
+            context.Resolver.set(resolver);
+            // since this is a new resolver entity, there can't be a resolved address yet so set to null
+            domain = { ...domain, resolvedAddress: null };
+
+        } else {
+            domain = { ...domain, resolvedAddress: resolver.addr };
+        }
+    } else {
+        domain = { ...domain, resolvedAddress: null };
+    }
+    context.Domain.set(domain);
 });
 
 ENSRegistryWithFallbackContract_NewTTL_loader(({ event, context }) => {
