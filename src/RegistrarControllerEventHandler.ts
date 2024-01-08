@@ -87,6 +87,7 @@ ETHRegistrarControllerContract_NameRegistered_handler(({ event, context }) => {
     let node = nameHash(name);
 
     let domain: DomainEntity = {
+        resolver: null,
         createdAt: BigInt(event.blockTimestamp),
         isMigrated: true,
         labelName: event.params.name,

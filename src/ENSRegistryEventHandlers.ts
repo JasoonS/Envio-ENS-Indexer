@@ -1,7 +1,6 @@
 /*
  *Please refer to https://docs.envio.dev for a thorough guide on all Envio indexer features*
  */
-import { resolve } from "path";
 import {
     ENSRegistryWithFallbackContract_NewOwner_handler,
     ENSRegistryWithFallbackContract_NewOwner_loader,

@@ -1,6 +1,4 @@
 /*
- *Please refer to https://docs.envio.dev for a thorough guide on all Envio indexer features*
- */
 import {
     ResolverContract_ABIChanged_handler,
     ResolverContract_ABIChanged_loader,
@@ -39,7 +37,7 @@ import {
     ResolverEntity,
     ResolverEventsSummaryEntity
 } from "./src/Types.gen";
-import { createResolverID } from "./utils";
+import {createResolverID} from "./utils";
 
 const GLOBAL_EVENTS_SUMMARY_KEY = "GlobalEventsSummary";
 
@@ -57,11 +55,11 @@ const INITIAL_EVENTS_SUMMARY: ResolverEventsSummaryEntity = {
     resolver_VersionChangedCount: BigInt(0),
 };
 
-ResolverContract_ABIChanged_loader(({ event, context }) => {
+ResolverContract_ABIChanged_loader(({event, context}) => {
     context.ResolverEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
 });
 
-ResolverContract_ABIChanged_handler(({ event, context }) => {
+ResolverContract_ABIChanged_handler(({event, context}) => {
     const summary = context.ResolverEventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
     const currentSummaryEntity: ResolverEventsSummaryEntity =
@@ -82,12 +80,12 @@ ResolverContract_ABIChanged_handler(({ event, context }) => {
     context.ResolverEventsSummary.set(nextSummaryEntity);
     context.Resolver_ABIChanged.set(resolver_ABIChangedEntity);
 });
-ResolverContract_AddrChanged_loader(({ event, context }) => {
+ResolverContract_AddrChanged_loader(({event, context}) => {
     context.ResolverEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-    context.Domain.load(event.params.node, { loaders: {} })
+    context.Domain.load(event.params.node, {loaders: {}})
 });
 
-ResolverContract_AddrChanged_handler(({ event, context }) => {
+ResolverContract_AddrChanged_handler(({event, context}) => {
     const summary = context.ResolverEventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
     const currentSummaryEntity: ResolverEventsSummaryEntity =
@@ -109,7 +107,7 @@ ResolverContract_AddrChanged_handler(({ event, context }) => {
     context.Resolver_AddrChanged.set(resolver_AddrChangedEntity);
 
     let resolverID = createResolverID(event.params.a, event.params.node)
-    let account: AccountEntity = { id: event.params.a }
+    let account: AccountEntity = {id: event.params.a}
     let resolver = <ResolverEntity>{
         addr: event.params.a,
         address: event.srcAddress,
@@ -118,18 +116,18 @@ ResolverContract_AddrChanged_handler(({ event, context }) => {
     }
     let domain = context.Domain.get(event.params.node)
     if (domain !== undefined && domain.resolver == resolverID) {
-        domain = { ...domain, resolvedAddress: null, }
+        domain = {...domain, resolvedAddress: null,}
         context.Domain.set(domain)
     }
     context.Account.set(account)
     context.Resolver.set(resolver)
 });
-ResolverContract_AddressChanged_loader(({ event, context }) => {
+ResolverContract_AddressChanged_loader(({event, context}) => {
     context.ResolverEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
     context.Resolver.load(createResolverID(event.srcAddress, event.params.node), {});
 });
 
-ResolverContract_AddressChanged_handler(({ event, context }) => {
+ResolverContract_AddressChanged_handler(({event, context}) => {
     const summary = context.ResolverEventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
     const currentSummaryEntity: ResolverEventsSummaryEntity =
@@ -166,21 +164,21 @@ ResolverContract_AddressChanged_handler(({ event, context }) => {
     let coinType = event.params.coinType;
 
     if (resolver.coinTypes == null) {
-        resolver = { ...resolver, coinTypes: [coinType] }
+        resolver = {...resolver, coinTypes: [coinType]}
     } else {
         let coinTypes = resolver.coinTypes;
         if (!coinTypes.includes(coinType)) {
             coinTypes.push(coinType);
-            resolver = { ...resolver, coinTypes: coinTypes }
+            resolver = {...resolver, coinTypes: coinTypes}
         }
     }
     context.Resolver.set(resolver)
 });
-ResolverContract_AuthorisationChanged_loader(({ event, context }) => {
+ResolverContract_AuthorisationChanged_loader(({event, context}) => {
     context.ResolverEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
 });
 
-ResolverContract_AuthorisationChanged_handler(({ event, context }) => {
+ResolverContract_AuthorisationChanged_handler(({event, context}) => {
     const summary = context.ResolverEventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
     const currentSummaryEntity: ResolverEventsSummaryEntity =
@@ -203,12 +201,12 @@ ResolverContract_AuthorisationChanged_handler(({ event, context }) => {
     context.ResolverEventsSummary.set(nextSummaryEntity);
     context.Resolver_AuthorisationChanged.set(resolver_AuthorisationChangedEntity);
 });
-ResolverContract_ContenthashChanged_loader(({ event, context }) => {
+ResolverContract_ContenthashChanged_loader(({event, context}) => {
     context.ResolverEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
     context.Resolver.load(createResolverID(event.srcAddress, event.params.node), {})
 });
 
-ResolverContract_ContenthashChanged_handler(({ event, context }) => {
+ResolverContract_ContenthashChanged_handler(({event, context}) => {
     const summary = context.ResolverEventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
     const currentSummaryEntity: ResolverEventsSummaryEntity =
@@ -243,15 +241,15 @@ ResolverContract_ContenthashChanged_handler(({ event, context }) => {
         resolver = fetchedResolver
     }
 
-    resolver = { ...resolver, contentHash: event.params.hash }
+    resolver = {...resolver, contentHash: event.params.hash}
 
     context.Resolver.set(resolver)
 });
-ResolverContract_InterfaceChanged_loader(({ event, context }) => {
+ResolverContract_InterfaceChanged_loader(({event, context}) => {
     context.ResolverEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
 });
 
-ResolverContract_InterfaceChanged_handler(({ event, context }) => {
+ResolverContract_InterfaceChanged_handler(({event, context}) => {
     const summary = context.ResolverEventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
     const currentSummaryEntity: ResolverEventsSummaryEntity =
@@ -273,11 +271,11 @@ ResolverContract_InterfaceChanged_handler(({ event, context }) => {
     context.ResolverEventsSummary.set(nextSummaryEntity);
     context.Resolver_InterfaceChanged.set(resolver_InterfaceChangedEntity);
 });
-ResolverContract_NameChanged_loader(({ event, context }) => {
+ResolverContract_NameChanged_loader(({event, context}) => {
     context.ResolverEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
 });
 
-ResolverContract_NameChanged_handler(({ event, context }) => {
+ResolverContract_NameChanged_handler(({event, context}) => {
     if (event.params.name.indexOf("\u0000") != -1) return;
     const summary = context.ResolverEventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
@@ -299,11 +297,11 @@ ResolverContract_NameChanged_handler(({ event, context }) => {
     context.ResolverEventsSummary.set(nextSummaryEntity);
     context.Resolver_NameChanged.set(resolver_NameChangedEntity);
 });
-ResolverContract_PubkeyChanged_loader(({ event, context }) => {
+ResolverContract_PubkeyChanged_loader(({event, context}) => {
     context.ResolverEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
 });
 
-ResolverContract_PubkeyChanged_handler(({ event, context }) => {
+ResolverContract_PubkeyChanged_handler(({event, context}) => {
     const summary = context.ResolverEventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
     const currentSummaryEntity: ResolverEventsSummaryEntity =
@@ -325,12 +323,12 @@ ResolverContract_PubkeyChanged_handler(({ event, context }) => {
     context.ResolverEventsSummary.set(nextSummaryEntity);
     context.Resolver_PubkeyChanged.set(resolver_PubkeyChangedEntity);
 });
-ResolverContract_TextChanged_loader(({ event, context }) => {
+ResolverContract_TextChanged_loader(({event, context}) => {
     context.ResolverEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
     context.Resolver.load(createResolverID(event.srcAddress, event.params.node), {})
 });
 
-ResolverContract_TextChanged_handler(({ event, context }) => {
+ResolverContract_TextChanged_handler(({event, context}) => {
     const summary = context.ResolverEventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
     const currentSummaryEntity: ResolverEventsSummaryEntity =
@@ -358,21 +356,21 @@ ResolverContract_TextChanged_handler(({ event, context }) => {
 
     let key = event.params.key;
     if (fetchedResolver === undefined) {
-        resolver = { ...resolver, texts: [key] }
+        resolver = {...resolver, texts: [key]}
     } else {
         let texts = resolver.texts!;
         if (!texts.includes(key)) {
             texts.push(key);
-            resolver = { ...resolver, texts: texts }
+            resolver = {...resolver, texts: texts}
         }
     }
     context.Resolver.set(resolver)
 });
-ResolverContract_VersionChanged_loader(({ event, context }) => {
+ResolverContract_VersionChanged_loader(({event, context}) => {
     context.ResolverEventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
 });
 
-ResolverContract_VersionChanged_handler(({ event, context }) => {
+ResolverContract_VersionChanged_handler(({event, context}) => {
     const summary = context.ResolverEventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
     const currentSummaryEntity: ResolverEventsSummaryEntity =
@@ -393,3 +391,4 @@ ResolverContract_VersionChanged_handler(({ event, context }) => {
     context.ResolverEventsSummary.set(nextSummaryEntity);
     context.Resolver_VersionChanged.set(resolver_VersionChangedEntity);
 });
+*/

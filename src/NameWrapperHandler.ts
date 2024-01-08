@@ -46,7 +46,6 @@ const INITIAL_EVENTS_SUMMARY: NameWrapperEventsSummaryEntity = {
     ownershipTransferredsCount: BigInt(0),
     transferBatchsCount: BigInt(0),
     transferSinglesCount: BigInt(0),
-    uRIsCount: BigInt(0)
 };
 
 const PARENT_CANNOT_CONTROL: bigint = BigInt(65536);
