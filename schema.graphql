@@ -330,9 +330,9 @@ type Account {
     "The domains owned by the account"
     domains: [Domain!]! @derivedFrom(field: "owner")
     "The WrappedDomains owned by the account"
-    wrappedDomains: [WrappedDomain!] @derivedFrom(field: "owner")
+    wrappedDomains: [WrappedDomain!]! @derivedFrom(field: "owner")
     "The Registrations made by the account"
-    registrations: [Registration!] @derivedFrom(field: "registrant")
+    registrations: [Registration!]! @derivedFrom(field: "registrant")
 }
 
 type WrappedDomain {
@@ -422,9 +422,9 @@ type Domain {
     expiryDate: BigInt
 
     "The registration associated with the domain"
-    registration: Registration @derivedFrom(field: "domain")
+    registration: Registration # @derivedFrom(field: "domain")
     "The wrapped domain associated with the domain"
-    wrappedDomain: WrappedDomain @derivedFrom(field: "domain")
+    wrappedDomain: WrappedDomain # @derivedFrom(field: "domain")
 
     baseCost: BigInt
     renewPremium: BigInt
