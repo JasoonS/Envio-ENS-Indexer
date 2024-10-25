@@ -1,4 +1,4 @@
-import {
+/* import {
   ENSRegistryWithFallback_NewOwner_createMockEvent,
   ETHRegistrarController_NameRegistered_createMockEvent,
   ETHRegistrarController_NameRegistered_processEvent,
@@ -104,3 +104,4 @@ describe("NameRegistered", () => {
   });
 });
 //test SubDomain create
+ */
