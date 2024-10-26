@@ -10,7 +10,7 @@ const { MockDb, Addresses, ENSRegistryWithFallback,
   ETHRegistrarController, } = TestHelpers;
 // import { Addresses } from "generated/src/bindings/Ethers.gen";
 import { expect } from 'chai';
-import { GRACE_PERIOD_SECONDS } from "../../src/utils";
+import { GRACE_PERIOD_SECONDS } from "../src/utils";
 import { t as mockDBType } from "generated/src/TestHelpers_MockDb.gen";
 
 import assert = require("assert")

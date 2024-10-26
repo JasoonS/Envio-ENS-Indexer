@@ -117,6 +117,9 @@ ENSRegistryWithFallback.NewResolver.handlerWithLoader({
   },
   handler: async ({ event, context, loaderReturn }) => {
     let { summary, domain } = loaderReturn;
+    if (domain === undefined) {
+      throw new Error("Domain is undefined - logic error");
+    }
 
     let currentSummaryEntity: ENSRegistryEventsSummary =
       summary ?? INITIAL_EVENTS_SUMMARY;
@@ -160,13 +163,12 @@ ENSRegistryWithFallback.NewResolver.handlerWithLoader({
         }
         await context.Resolver.set(resolver);
 
-        // TODO: check the types - shouldn't need to co-erce to Domain
-        domain = { ...domain, resolvedAddress_id: undefined } as Domain;
+        domain = { ...domain, resolvedAddress_id: undefined };
       } else {
-        domain = { ...domain, resolvedAddress_id: resolver.addr_id } as Domain;
+        domain = { ...domain, resolvedAddress_id: resolver.addr_id };
       }
     } else {
-      domain = { ...domain, resolvedAddress_id: undefined } as Domain;
+      domain = { ...domain, resolvedAddress_id: undefined };
     }
     await context.Domain.set(domain);
   }
